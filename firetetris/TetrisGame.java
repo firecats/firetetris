@@ -1,6 +1,10 @@
 package firetetris;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 class TetrisGame {
 	
@@ -9,7 +13,7 @@ class TetrisGame {
 
 	// Game properties
 	private Tetromino current;
-	private Shape next;
+	private LinkedList<Shape> nextShapes;
 	private Grid grid;
 	private Shape[] shapes = new Shape[7];
 
@@ -37,6 +41,7 @@ class TetrisGame {
 		shapes[4] = new Shape(3, new int[] {2,3,4,5}, new Color(255,165,0));  	// L
 		shapes[5] = new Shape(3, new int[] {1,3,4,5}, new Color(160,32,240)); 	// T
 		shapes[6] = new Shape(2, new int[] {0,1,2,3}, new Color(255,255,0));  	// O
+		nextShapes = new LinkedList<Shape>();
 		
 		grid = new Grid(20, 10);
 		loadNext();
@@ -49,8 +54,8 @@ class TetrisGame {
 		return current;
 	}
 
-	public Shape getNext() {
-		return next;
+	public List<Shape> getNextShapes() {
+		return nextShapes;
 	}
 
 	public Grid getGrid() {
@@ -201,13 +206,15 @@ class TetrisGame {
 	}
 
 	private void loadNext() {
-		if (next != null) {
-			current = new Tetromino(next);			
-		} else {
-			current = new Tetromino(shapes[(int)(Math.random() * 7)]);
+		while (nextShapes.size() < shapes.length) {
+			List<Shape> newShapes = new ArrayList<Shape>(Arrays.asList(shapes));
+			while (!newShapes.isEmpty()) {
+				nextShapes.add(newShapes.remove((int)(Math.random() * newShapes.size())));
+			}
 		}
+		
+		current = new Tetromino(nextShapes.remove());
 		current.final_row = getFinalRow();
-		next = shapes[(int)(Math.random() * 7)];
 		gameOver = !isLegal(current.shape, 3, -1);
 	}
 

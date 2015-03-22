@@ -1,4 +1,7 @@
 package firetetris;
+
+import java.util.List;
+
 import processing.core.PApplet;
 import controlP5.Button;
 import controlP5.ControlEvent;
@@ -22,9 +25,9 @@ class AppletRenderer implements ControlListener {
 		btn.addListener(this);
 		
 		boardView = new GridView(20, 20, 321, 642, parent);
-		previewView = new GridView(355, 20, 116, 58, parent);
-		previewView.rows = 2;
-		previewView.cols = 4;
+		previewView = new GridView(355, 20, 116, 213, parent);
+		previewView.rows = 11;
+		previewView.cols = 6;
 	}
 
 	void renderGameState(TetrisGame gameState) {
@@ -46,13 +49,17 @@ class AppletRenderer implements ControlListener {
 		}
 		
 		previewView.drawOutline();
-		previewView.drawShape(gameState.getNext(), 0, -gameState.getNext().getFirstNonEmptyRow());
+		List<Shape> nextShapes = gameState.getNextShapes();
+		for (int i = 0; i < Math.min(nextShapes.size() - 1, 3); ++i) {
+			Shape next = nextShapes.get(i);
+			previewView.drawShape(next, 1, 1 + i * 3 - next.getFirstNonEmptyRow());
+		}
 		
 		parent.fill(255);
 		
-		parent.text("LEVEL\n" + gameState.getLevel(), parent.width - 150, 120);
-		parent.text("LINES\n" + gameState.getLines(), parent.width - 150, 200);
-		parent.text("SCORE\n" + gameState.getScore(), parent.width - 150, 280);
+		parent.text("LEVEL\n" + gameState.getLevel(), parent.width - 150, 260);
+		parent.text("LINES\n" + gameState.getLines(), parent.width - 150, 320);
+		parent.text("SCORE\n" + gameState.getScore(), parent.width - 150, 400);
 	}
 
 	@Override
