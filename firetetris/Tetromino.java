@@ -9,7 +9,7 @@ class Tetromino {
 
 	Tetromino(Shape shape) {
 		this.shape = new Shape(shape);
-		x = 3;
+		x = (10 - shape.matrix.length) / 2;
 		y = -2;
 	}
 
