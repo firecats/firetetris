@@ -14,6 +14,8 @@ class TetrisGame {
 	// Game properties
 	private Tetromino current;
 	private LinkedList<Shape> nextShapes;
+	private Shape held;
+	private boolean heldUsed;
 	private Grid grid;
 	private Shape[] shapes = new Shape[7];
 
@@ -45,6 +47,7 @@ class TetrisGame {
 		
 		grid = new Grid(20, 10);
 		loadNext();
+		held = nextShapes.remove();
 
 		currTime = 0;
 		animateCount = -1;
@@ -52,6 +55,14 @@ class TetrisGame {
 
 	public Tetromino getCurrent() {
 		return current;
+	}
+	
+	public Shape getHeld() {
+		return held;
+	}
+	
+	public boolean isHeldUsed() {
+		return heldUsed;
 	}
 
 	public List<Shape> getNextShapes() {
@@ -176,6 +187,16 @@ class TetrisGame {
 		}
 	}
 	
+	public void swapHeldPiece() {
+		if (heldUsed) return;
+		
+		Shape tmp = held;
+		held = current.shape;
+		insertShape(tmp);
+		
+		heldUsed = true;
+	}
+	
 	private void finalizeShapePlacement() {
 		for (int i = 0; i < current.shape.matrix.length; ++i)
 			for (int j = 0; j < current.shape.matrix.length; ++j)
@@ -189,6 +210,8 @@ class TetrisGame {
 		} else {
 			loadNext();			
 		}
+		
+		heldUsed = false;
 	}
 
 	private boolean checkLines() {
@@ -213,7 +236,11 @@ class TetrisGame {
 			}
 		}
 		
-		current = new Tetromino(nextShapes.remove());
+		insertShape(nextShapes.remove());
+	}
+
+	private void insertShape(Shape shape) {
+		current = new Tetromino(shape);
 		current.final_row = getFinalRow();
 		gameOver = !isLegal(current.shape, 3, -1);
 	}

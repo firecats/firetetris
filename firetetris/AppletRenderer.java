@@ -14,6 +14,7 @@ class AppletRenderer implements ControlListener {
 	private final ControlP5 controlP5;
 	private final GridView boardView;
 	private final GridView previewView;
+	private final GridView heldPieceView;
 	
 	AppletRenderer(TetrisSketch parent) {
 		this.parent = parent;
@@ -25,7 +26,10 @@ class AppletRenderer implements ControlListener {
 		btn.addListener(this);
 		
 		boardView = new GridView(20, 20, 321, 642, parent);
-		previewView = new GridView(355, 20, 116, 213, parent);
+		heldPieceView = new GridView(355, 20, 116, 58, parent);
+		heldPieceView.rows = 2;
+		heldPieceView.cols = 4;
+		previewView = new GridView(355, 88, 116, 213, parent);
 		previewView.rows = 11;
 		previewView.cols = 6;
 	}
@@ -55,11 +59,16 @@ class AppletRenderer implements ControlListener {
 			previewView.drawShape(next, 1, 1 + i * 3 - next.getFirstNonEmptyRow());
 		}
 		
+		if (!gameState.isHeldUsed()) {
+			heldPieceView.drawOutline();
+		}
+		heldPieceView.drawShape(gameState.getHeld(), 0, -gameState.getHeld().getFirstNonEmptyRow());
+		
 		parent.fill(255);
 		
-		parent.text("LEVEL\n" + gameState.getLevel(), parent.width - 150, 260);
-		parent.text("LINES\n" + gameState.getLines(), parent.width - 150, 320);
-		parent.text("SCORE\n" + gameState.getScore(), parent.width - 150, 400);
+		parent.text("LEVEL\n" + gameState.getLevel(), parent.width - 150, 340);
+		parent.text("LINES\n" + gameState.getLines(), parent.width - 150, 400);
+		parent.text("SCORE\n" + gameState.getScore(), parent.width - 150, 480);
 	}
 
 	@Override

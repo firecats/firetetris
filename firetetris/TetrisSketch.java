@@ -35,6 +35,7 @@ public class TetrisSketch extends PApplet {
 		case RIGHT : gameState.right(); break;
 		case UP : gameState.rotate(); break;
 		case DOWN : gameState.down(); break;
+		case SHIFT: gameState.swapHeldPiece(); break;
 		case ' ' : gameState.hardDown(); break;
 		}
 	}
