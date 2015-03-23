@@ -15,7 +15,7 @@ import processing.core.*;
 public class TetrisSketch extends PApplet {
 
 	AppletRenderer renderer;
-	TetrisGame gameState;
+	TetrisGame currentGame;
 
 	public void setup() {
 		renderer = new AppletRenderer(this);
@@ -23,24 +23,24 @@ public class TetrisSketch extends PApplet {
 	}
 
 	public void draw() {
-		gameState.update();
-		renderer.renderGameState(gameState);
+		currentGame.update();
+		renderer.renderGameState(currentGame);
 	}
 
 	public void keyPressed() {
-		if (gameState.isGameOver()) return;
+		if (currentGame.isGameOver()) return;
 		
 		switch(keyCode) {
-		case LEFT : gameState.left(); break;
-		case RIGHT : gameState.right(); break;
-		case UP : gameState.rotate(); break;
-		case DOWN : gameState.down(); break;
-		case SHIFT: gameState.swapHeldPiece(); break;
-		case ' ' : gameState.hardDown(); break;
+		case LEFT : currentGame.left(); break;
+		case RIGHT : currentGame.right(); break;
+		case UP : currentGame.rotate(); break;
+		case DOWN : currentGame.down(); break;
+		case SHIFT: currentGame.swapHeldPiece(); break;
+		case ' ' : currentGame.hardDown(); break;
 		}
 	}
 	
 	public void newGame() {
-		gameState = new TetrisGame();
+		currentGame = new TetrisGame();
 	}
 }

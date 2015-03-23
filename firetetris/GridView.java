@@ -32,7 +32,7 @@ class GridView {
 		return parent.color(c.getRed(), c.getGreen(), c.getBlue());
 	}
 	
-	public void drawGrid(Grid grid, TetrisGame gameState) {
+	public void drawGrid(Grid grid, TetrisGame currentGame) {
 		parent.pushStyle();
 
 		for (int i = 0; i < grid.cols; ++i)
@@ -40,9 +40,9 @@ class GridView {
 				fillSquare(i, j, convertColor(grid.colors[i][j]));
 
 		// line clear animation
-		if (gameState.getAnimateCount() >= 0) {
+		if (currentGame.getAnimateCount() >= 0) {
 			//calculate a background that smoothly oscillates between black and white
-			int c = (int) (127 + 127 * Math.cos(Math.PI * (double) gameState.getAnimateCount() / TetrisGame.ANIMATION_LENGTH));
+			int c = (int) (127 + 127 * Math.cos(Math.PI * (double) currentGame.getAnimateCount() / TetrisGame.ANIMATION_LENGTH));
 			if (grid.clearedRows.size() == 4)
 				c = parent.color(0, c, c); // cyan animation for a Tetris
 			for (int row : grid.clearedRows)

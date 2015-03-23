@@ -29,46 +29,46 @@ class AppletRenderer implements ControlListener {
 		heldPieceView = new GridView(355, 20, 116, 58, parent);
 		heldPieceView.rows = 2;
 		heldPieceView.cols = 4;
-		previewView = new GridView(355, 88, 116, 213, parent);
-		previewView.rows = 11;
+		previewView = new GridView(355, 88, 116, 193, parent);
+		previewView.rows = 10;
 		previewView.cols = 6;
 	}
 
-	void renderGameState(TetrisGame gameState) {
+	void renderGameState(TetrisGame currentGame) {
 		parent.background(0);
 		
-		if (gameState.isGameOver()) {
-			parent.text("GAME OVER\nSCORE: " + gameState.getScore(), parent.width/2 - 70, parent.height/2 - 50);
+		if (currentGame.isGameOver()) {
+			parent.text("GAME OVER\nSCORE: " + currentGame.getScore(), parent.width/2 - 70, parent.height/2 - 50);
 			controlP5.draw(); // show the play again button
 			return;
 		}
 		
-		boardView.rows = gameState.getGrid().rows;
-		boardView.cols = gameState.getGrid().cols;
+		boardView.rows = currentGame.getGrid().rows;
+		boardView.cols = currentGame.getGrid().cols;
 		boardView.drawOutline();
-		boardView.drawGrid(gameState.getGrid(), gameState);
-		if (gameState.getCurrent() != null) {
-			boardView.drawShape(gameState.getCurrent().shape, gameState.getCurrent().x, gameState.getCurrent().y);
-			boardView.drawShapeOutline(gameState.getCurrent().shape, gameState.getCurrent().x, gameState.getCurrent().final_row);
+		boardView.drawGrid(currentGame.getGrid(), currentGame);
+		if (currentGame.getCurrent() != null) {
+			boardView.drawShape(currentGame.getCurrent().shape, currentGame.getCurrent().x, currentGame.getCurrent().y);
+			boardView.drawShapeOutline(currentGame.getCurrent().shape, currentGame.getCurrent().x, currentGame.getCurrent().final_row);
 		}
 		
 		previewView.drawOutline();
-		List<Shape> nextShapes = gameState.getNextShapes();
+		List<Shape> nextShapes = currentGame.getNextShapes();
 		for (int i = 0; i < Math.min(nextShapes.size() - 1, 3); ++i) {
 			Shape next = nextShapes.get(i);
 			previewView.drawShape(next, 1, 1 + i * 3 - next.getFirstNonEmptyRow());
 		}
 		
-		if (!gameState.isHeldUsed()) {
+		if (!currentGame.isHeldUsed()) {
 			heldPieceView.drawOutline();
 		}
-		heldPieceView.drawShape(gameState.getHeld(), 0, -gameState.getHeld().getFirstNonEmptyRow());
+		heldPieceView.drawShape(currentGame.getHeld(), 0, -currentGame.getHeld().getFirstNonEmptyRow());
 		
 		parent.fill(255);
 		
-		parent.text("LEVEL\n" + gameState.getLevel(), parent.width - 150, 340);
-		parent.text("LINES\n" + gameState.getLines(), parent.width - 150, 400);
-		parent.text("SCORE\n" + gameState.getScore(), parent.width - 150, 480);
+		parent.text("LEVEL\n" + currentGame.getLevel(), parent.width - 150, 340);
+		parent.text("LINES\n" + currentGame.getLines(), parent.width - 150, 400);
+		parent.text("SCORE\n" + currentGame.getScore(), parent.width - 150, 480);
 	}
 
 	@Override
