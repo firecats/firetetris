@@ -36,13 +36,13 @@ class TetrisGame {
 	private int animateCount;
 
 	TetrisGame() {
-		shapes[0] = new Shape(4, new int[] {4,5,6,7}, new Color(0,255,255));  // I
-		shapes[1] = new Shape(3, new int[] {1,2,3,4}, new Color(0,255,0));   	// S
-		shapes[2] = new Shape(3, new int[] {0,1,4,5}, new Color(255,0,0));    	// Z
-		shapes[3] = new Shape(3, new int[] {0,3,4,5}, new Color(0,0,255));    	// J
-		shapes[4] = new Shape(3, new int[] {2,3,4,5}, new Color(255,165,0));  	// L
-		shapes[5] = new Shape(3, new int[] {1,3,4,5}, new Color(160,32,240)); 	// T
-		shapes[6] = new Shape(2, new int[] {0,1,2,3}, new Color(255,255,0));  	// O
+		shapes[0] = new Shape(4, new int[] {4,5,6,7}, new Color(0,255,255), 0);  	// I
+		shapes[1] = new Shape(3, new int[] {1,2,3,4}, new Color(0,255,0), 1);   	// S
+		shapes[2] = new Shape(3, new int[] {0,1,4,5}, new Color(255,0,0), 2);    	// Z
+		shapes[3] = new Shape(3, new int[] {0,3,4,5}, new Color(0,0,255), 3);    	// J
+		shapes[4] = new Shape(3, new int[] {2,3,4,5}, new Color(255,165,0), 4);  	// L
+		shapes[5] = new Shape(3, new int[] {1,3,4,5}, new Color(160,32,240), 5); 	// T
+		shapes[6] = new Shape(2, new int[] {0,1,2,3}, new Color(255,255,0), 6);  	// O
 		nextShapes = new LinkedList<Shape>();
 		
 		grid = new Grid(20, 10);
@@ -190,9 +190,9 @@ class TetrisGame {
 	public void swapHeldPiece() {
 		if (heldUsed) return;
 		
-		Shape tmp = held;
-		held = current.shape;
-		insertShape(tmp);
+		int currentShapeId = current.shape.shapeId;
+		insertShape(held);
+		held = shapes[currentShapeId];
 		
 		heldUsed = true;
 	}

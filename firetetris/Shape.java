@@ -5,8 +5,9 @@ import java.awt.Color;
 class Shape {
 	boolean[][] matrix;
 	Color c;
+	int shapeId;
 
-	Shape(int n, int[] blockNums, Color color) {
+	Shape(int n, int[] blockNums, Color color, int shapeId) {
 		matrix = new boolean[n][n];
 		for (int x = 0; x < n; ++x)
 			for (int y = 0; y < n; ++y) 
@@ -14,11 +15,13 @@ class Shape {
 		for (int i = 0; i < blockNums.length; ++i)
 			matrix[blockNums[i]%n][blockNums[i]/n] = true;
 		this.c = color;
+		this.shapeId = shapeId;
 	}
 	
-	Shape(boolean[][] matrix, Color color) {
+	Shape(boolean[][] matrix, Color color, int shapeId) {
 		this.matrix = matrix;
 		this.c = color;
+		this.shapeId = shapeId;
 	}
 
 	Shape(Shape other) {
@@ -27,6 +30,7 @@ class Shape {
 			for (int y = 0; y < matrix.length; ++y)
 				matrix[x][y] = other.matrix[x][y];
 		this.c = other.c;
+		this.shapeId = other.shapeId;
 	}
 
 	public Shape rotated() {
@@ -34,7 +38,7 @@ class Shape {
 		for (int x = 0; x < ret.length; ++x)
 			for (int y = 0; y < ret.length; ++y)
 				ret[x][y] = matrix[y][ret.length - 1 - x];
-		return new Shape(ret, c);
+		return new Shape(ret, c, this.shapeId);
 	}
 
 	public int getFirstNonEmptyRow() {
