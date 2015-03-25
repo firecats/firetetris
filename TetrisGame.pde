@@ -1,11 +1,3 @@
-package firetetris;
-
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-
 class TetrisGame {
 	
 	public final static int ANIMATION_LENGTH = 25;
@@ -13,7 +5,7 @@ class TetrisGame {
 
 	// Game properties
 	private Tetromino current;
-	private LinkedList<Shape> nextShapes;
+	private ArrayList<Shape> nextShapes;
 	private Shape held;
 	private boolean heldUsed;
 	private Grid grid;
@@ -36,18 +28,18 @@ class TetrisGame {
 	private int animateCount;
 
 	TetrisGame() {
-		shapes[0] = new Shape(4, new int[] {4,5,6,7}, new Color(0,255,255), 0);  	// I
-		shapes[1] = new Shape(3, new int[] {1,2,3,4}, new Color(0,255,0), 1);   	// S
-		shapes[2] = new Shape(3, new int[] {0,1,4,5}, new Color(255,0,0), 2);    	// Z
-		shapes[3] = new Shape(3, new int[] {0,3,4,5}, new Color(0,0,255), 3);    	// J
-		shapes[4] = new Shape(3, new int[] {2,3,4,5}, new Color(255,165,0), 4);  	// L
-		shapes[5] = new Shape(3, new int[] {1,3,4,5}, new Color(160,32,240), 5); 	// T
-		shapes[6] = new Shape(2, new int[] {0,1,2,3}, new Color(255,255,0), 6);  	// O
-		nextShapes = new LinkedList<Shape>();
+		shapes[0] = new Shape(4, new int[] {4,5,6,7}, color(0, 255, 255), 0);  	// I
+		shapes[1] = new Shape(3, new int[] {1,2,3,4}, color(0,255,0), 1);   		// S
+		shapes[2] = new Shape(3, new int[] {0,1,4,5}, color(255,0,0), 2);    	// Z
+		shapes[3] = new Shape(3, new int[] {0,3,4,5}, color(0,0,255), 3);    	// J
+		shapes[4] = new Shape(3, new int[] {2,3,4,5}, color(255,165,0), 4);  	// L
+		shapes[5] = new Shape(3, new int[] {1,3,4,5}, color(160,32,240), 5); 	// T
+		shapes[6] = new Shape(2, new int[] {0,1,2,3}, color(255,255,0), 6);  	// O
+		nextShapes = new ArrayList<Shape>();
 		
 		grid = new Grid(20, 10);
 		loadNext();
-		held = nextShapes.remove();
+		held = nextShapes.remove(0);
 
 		currTime = 0;
 		animateCount = -1;
@@ -65,7 +57,7 @@ class TetrisGame {
 		return heldUsed;
 	}
 
-	public List<Shape> getNextShapes() {
+	public ArrayList<Shape> getNextShapes() {
 		return nextShapes;
 	}
 
@@ -201,7 +193,7 @@ class TetrisGame {
 		for (int i = 0; i < current.shape.matrix.length; ++i)
 			for (int j = 0; j < current.shape.matrix.length; ++j)
 				if (current.shape.matrix[i][j] && j + current.y >= 0) 
-					grid.colors[i + current.x][j + current.y] = current.getColor();
+					grid.colors[i + current.x][j + current.y] = current.getcolor();
 		
 		if (checkLines()) {
 			// Start "rows cleared" animation, next piece will be loaded at end of animation 
@@ -230,13 +222,16 @@ class TetrisGame {
 
 	private void loadNext() {
 		while (nextShapes.size() < shapes.length) {
-			List<Shape> newShapes = new ArrayList<Shape>(Arrays.asList(shapes));
+			ArrayList<Shape> newShapes = new ArrayList<Shape>();
+			for (int i = 0; i < shapes.length; ++i) {
+				newShapes.add(new Shape(shapes[i]));
+			}
 			while (!newShapes.isEmpty()) {
 				nextShapes.add(newShapes.remove((int)(Math.random() * newShapes.size())));
 			}
 		}
 		
-		insertShape(nextShapes.remove());
+		insertShape(nextShapes.remove(0));
 	}
 
 	private void insertShape(Shape shape) {

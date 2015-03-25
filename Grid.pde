@@ -1,31 +1,27 @@
-package firetetris;
-import java.awt.Color;
-import java.util.ArrayList;
-
 class Grid {
 	int rows, cols;
-	Color[][] colors;
+	color[][] colors;
 	ArrayList<Integer> clearedRows = new ArrayList<Integer>();
 
 	Grid(int rows, int cols) {
 		this.rows = rows;
 		this.cols = cols;
-		colors = new Color[cols][rows];
+		colors = new color[cols][rows];
 		for (int i = 0; i < cols; ++i)
 			for (int j = 0; j < rows; ++j)
-				colors[i][j] = Color.BLACK;
+				colors[i][j] = 0;
 	}
 
 	void clear() {
 		for (int i = 0; i < cols; ++i)
 			for (int j = 0; j < rows; ++j)
-				colors[i][j] = Color.BLACK;
+				colors[i][j] = 0;
 	}
 
 	void eraseCleared() {
 		for (int row : clearedRows) {
 			for (int j = row - 1; j > 0; --j) {
-				Color[] rowCopy = new Color[cols];
+				color[] rowCopy = new color[cols];
 				for (int i = 0; i < cols; ++i)
 					rowCopy[i] = colors[i][j];
 				for (int i = 0; i < cols; ++i)
@@ -37,7 +33,7 @@ class Grid {
 	boolean isOccupied(int x, int y) {
 		if (y < 0 && x < cols && x >= 0) // allow movement/flipping to spaces above the board
 		return false;
-		return (x >= cols || x < 0 || y >= rows || colors[x][y] != Color.BLACK);
+		return (x >= cols || x < 0 || y >= rows || colors[x][y] != 0);
 	}
 
 	public void updatedClearedRows() {
@@ -45,7 +41,7 @@ class Grid {
 		for (int j = 0; j < rows; ++j) {
 			boolean cleared = true;
 			for (int i = 0; i < cols; ++i)
-				if (colors[i][j] == Color.BLACK)
+				if (colors[i][j] == 0)
 					cleared = false;
 			
 			if (cleared) clearedRows.add(j);

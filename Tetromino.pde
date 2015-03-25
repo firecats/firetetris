@@ -1,7 +1,3 @@
-package firetetris;
-
-import java.awt.Color;
-
 class Tetromino {
 	Shape shape;
 	int x, y;
@@ -13,5 +9,5 @@ class Tetromino {
 		y = -2;
 	}
 
-	Color getColor() { return shape.c; }
+	color getcolor() { return shape.c; }
 }

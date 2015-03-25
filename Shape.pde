@@ -1,26 +1,22 @@
-package firetetris;
-
-import java.awt.Color;
-
 class Shape {
 	boolean[][] matrix;
-	Color c;
+	color c;
 	int shapeId;
 
-	Shape(int n, int[] blockNums, Color color, int shapeId) {
+	Shape(int n, int[] blockNums, color c, int shapeId) {
 		matrix = new boolean[n][n];
 		for (int x = 0; x < n; ++x)
 			for (int y = 0; y < n; ++y) 
 				matrix[x][y] = false;
 		for (int i = 0; i < blockNums.length; ++i)
 			matrix[blockNums[i]%n][blockNums[i]/n] = true;
-		this.c = color;
+		this.c = c;
 		this.shapeId = shapeId;
 	}
 	
-	Shape(boolean[][] matrix, Color color, int shapeId) {
+	Shape(boolean[][] matrix, color c, int shapeId) {
 		this.matrix = matrix;
-		this.c = color;
+		this.c = c;
 		this.shapeId = shapeId;
 	}
 
