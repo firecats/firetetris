@@ -193,7 +193,7 @@ class TetrisGame {
     for (int i = 0; i < current.shape.matrix.length; ++i)
       for (int j = 0; j < current.shape.matrix.length; ++j)
         if (current.shape.matrix[i][j] && j + current.y >= 0) 
-          grid.colors[i + current.x][j + current.y] = current.getcolor();
+          grid.colors[i + current.x][j + current.y] = current.shape.c;
     
     if (checkLines()) {
       // Start "rows cleared" animation, next piece will be loaded at end of animation 
