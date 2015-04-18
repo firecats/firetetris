@@ -1,4 +1,3 @@
-import processing.core.*;
 import controlP5.*;
 
 class AppletRenderer implements ControlListener {

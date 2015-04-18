@@ -9,8 +9,6 @@
   SPACE - hard drop (drop immediately)
  */
 
-import processing.core.*;
-
 Config config;
 AppletRenderer renderer;
 UDPRenderer udpRenderer;
