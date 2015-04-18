@@ -19,7 +19,7 @@ ControlP5 controlP5;
 
 public void setup() {
   controlP5 = new ControlP5(this);
-  renderer = new AppletRenderer(config);
+  renderer = new AppletRenderer();
   udpRenderer = new UDPRenderer(config);
   newGame();
   color a = color(1,1,1);
