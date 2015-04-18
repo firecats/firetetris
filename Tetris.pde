@@ -11,13 +11,16 @@
 
 import processing.core.*;
 
+Config config;
 AppletRenderer renderer;
+UDPRenderer udpRenderer;
 TetrisGame currentGame;
 ControlP5 controlP5;
 
 public void setup() {
   controlP5 = new ControlP5(this);
-  renderer = new AppletRenderer();
+  renderer = new AppletRenderer(config);
+  udpRenderer = new UDPRenderer(config);
   newGame();
   color a = color(1,1,1);
 }
@@ -25,6 +28,7 @@ public void setup() {
 public void draw() {
   currentGame.update();
   renderer.renderGameState(currentGame);
+  udpRenderer.renderGameState(currentGame);
 }
 
 public void keyPressed() {
