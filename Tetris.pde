@@ -49,5 +49,6 @@ public void keyPressed() {
 }
 
 public void newGame() {
+  minim.stop();
   currentGame = new TetrisGame(minim);
 }
