@@ -27,7 +27,9 @@ class UDPRenderer {
     boolean[][] flattenGrid = new boolean[grid.cols][grid.rows];   
     
     setGridData(flattenGrid, grid);
-    setShapeData(flattenGrid, current.shape, current.x, current.y);
+    
+    if(current != null) 
+      setShapeData(flattenGrid, current.shape, current.x, current.y);
     
     packet.addGridData(flattenGrid);
     
