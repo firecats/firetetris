@@ -26,6 +26,10 @@ class Packet {
     }
   }
   
+  void emptyGrid() {
+    this.addGridData(new boolean[this.width][this.height]);
+  }
+  
   String getData() {
     return this.packet;
   }

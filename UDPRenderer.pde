@@ -10,28 +10,29 @@ class UDPRenderer {
   UDPRenderer(Config config) {
     this.config = config;
     
-    udp = new UDP(this, config.localPort);
+    udp = new UDP(this);
     //udp.log(true);     //printout the connection activity
-    udp.listen(true);
   }
   
   void renderGameState(TetrisGame currentGame) {
-    if (currentGame.isGameOver()) {
-      return;
-    }
-        
     Grid grid = currentGame.getGrid();
-    Tetromino current = currentGame.getCurrent();
+    Packet packet = new Packet(this.config.protocolVersion, grid.cols, grid.rows);
     
-    Packet packet = new Packet(this.config.protocalVersion, grid.cols, grid.rows);
-    boolean[][] flattenGrid = new boolean[grid.cols][grid.rows];   
-    
-    setGridData(flattenGrid, grid);
-    
-    if(current != null) 
-      setShapeData(flattenGrid, current.shape, current.x, current.y);
-    
-    packet.addGridData(flattenGrid);
+    if (currentGame.isGameOver()) {
+      packet.emptyGrid();
+    }
+    else {
+      Tetromino current = currentGame.getCurrent();
+      
+      boolean[][] flattenGrid = new boolean[grid.cols][grid.rows];   
+      
+      setGridData(flattenGrid, grid);
+      
+      if(current != null) 
+        setShapeData(flattenGrid, current.shape, current.x, current.y);
+      
+      packet.addGridData(flattenGrid);
+    }
     
     this.send(packet);  
   }
