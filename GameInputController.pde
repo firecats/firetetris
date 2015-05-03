@@ -4,6 +4,7 @@
 class GameInputController {
 
   KeyboardGameInput keyboardInput;
+  GamepadGameInput gamepadInput;
 
   CommandDelayManager rotateCommandManager;
   CommandDelayManager downCommandManager;
@@ -12,8 +13,9 @@ class GameInputController {
   CommandDelayManager hardDownCommandManager;
   CommandDelayManager swapHeldCommandManager;
 
-  GameInputController() {
+  GameInputController(PApplet applet) {
     keyboardInput = new KeyboardGameInput();
+    gamepadInput = new GamepadGameInput(applet);
 
     rotateCommandManager = new CommandDelayManager();
     downCommandManager = new CommandDelayManager();
@@ -26,14 +28,14 @@ class GameInputController {
   public void update(TetrisGame game) {
     if (game == null) return;
 
-    keyboardInput.update();
+    gamepadInput.update();
 
-    if (rotateCommandManager.isTriggered(keyboardInput.rotateActive)) game.rotate();
-    if (downCommandManager.isTriggered(keyboardInput.downActive)) game.down();
-    if (leftCommandManager.isTriggered(keyboardInput.leftActive)) game.left();
-    if (rightCommandManager.isTriggered(keyboardInput.rightActive)) game.right();
-    if (hardDownCommandManager.isTriggered(keyboardInput.hardDownActive)) game.hardDown();
-    if (swapHeldCommandManager.isTriggered(keyboardInput.swapHeldActive)) game.swapHeldPiece();
+    if (rotateCommandManager.isTriggered(gamepadInput.rotateActive)) game.rotate();
+    if (downCommandManager.isTriggered(gamepadInput.downActive)) game.down();
+    if (leftCommandManager.isTriggered(gamepadInput.leftActive)) game.left();
+    if (rightCommandManager.isTriggered(gamepadInput.rightActive)) game.right();
+    if (hardDownCommandManager.isTriggered(gamepadInput.hardDownActive)) game.hardDown();
+    if (swapHeldCommandManager.isTriggered(gamepadInput.swapHeldActive)) game.swapHeldPiece();
   }
 
   public void keyPressed() {

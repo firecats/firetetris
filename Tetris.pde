@@ -19,12 +19,15 @@ GameInputController inputController;
 ControlP5 controlP5;
 
 public void setup() {
+  size(500, 690, PApplet.P2D); // Must be the first call in setup()
+
   controlP5 = new ControlP5(this);
-  inputController = new GameInputController();
+  inputController = new GameInputController(this);
   renderer = new AppletRenderer();
   udpRenderer = new UDPRenderer(config);
   newGame();
   color a = color(1,1,1);
+
 }
 
 public void draw() {

@@ -1,0 +1,7 @@
+NES Game Controller
+XPOS	Horizontal position on D-PAD	3	SLIDER	X Axis	0	1.0	0.0
+YPOS	Vertical position on D-PAD	3	SLIDER	Y Axis	0	1.0	0.0
+A	Button A	1	BUTTON	Button 0	0	0.0	0.0
+B	Button B	1	BUTTON	Button 1	0	0.0	0.0
+SELECT	Button Select	1	BUTTON	Button 2	0	0.0	0.0
+START	Button Start	1	BUTTON	Button 3	0	0.0	0.0

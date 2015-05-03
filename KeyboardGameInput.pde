@@ -1,11 +1,5 @@
 class KeyboardGameInput extends GameInput {
 
-  KeyboardGameInput() {
-  }
-
-  public void update() {
-  }
-
   public void keyPressed() {
     switch (keyCode) {
       case UP: rotateActive = true; break;

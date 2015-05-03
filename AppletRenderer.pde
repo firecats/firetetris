@@ -8,7 +8,6 @@ class AppletRenderer implements ControlListener {
   private final GridView heldPieceView;
   
   AppletRenderer() {
-    size(500, 690, PApplet.P2D);
     textSize(25);
     Button btn = controlP5.addButton("play", 1, width/2 - 35, height/2, 70, 20);
     btn.setLabel("play again");
