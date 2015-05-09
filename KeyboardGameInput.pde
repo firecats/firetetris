@@ -1,5 +1,10 @@
 class KeyboardGameInput extends GameInput {
 
+  KeyboardGameInput() {
+    // Not available using standard keyboard mapping
+    counterRotateActive = false;
+  }
+
   public void keyPressed() {
     switch (keyCode) {
       case UP: rotateActive = true; break;

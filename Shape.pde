@@ -37,6 +37,14 @@ class Shape {
     return new Shape(ret, c, this.shapeId);
   }
 
+  public Shape counterRotated() {
+    boolean[][] ret = new boolean[matrix.length][matrix.length];
+    for (int x = 0; x < ret.length; ++x)
+      for (int y = 0; y < ret.length; ++y)
+        ret[x][y] = matrix[ret.length - 1 - y][x];
+    return new Shape(ret, c, this.shapeId);
+  }
+
   public int getFirstNonEmptyRow() {
     for (int j = 0; j < matrix.length; ++j) {
       for (int i = 0; i < matrix.length; ++i) {

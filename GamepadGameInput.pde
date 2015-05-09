@@ -7,14 +7,25 @@ class GamepadGameInput extends GameInput {
     control = ControlIO.getInstance(applet);
     // Find a device that matches the configuration file
     gpad = control.getMatchedDevice("nes_controller");
+
+    rotateActive = false;
+    counterRotateActive = false;
+    downActive = false;
+    leftActive = false;
+    rightActive = false;
+    hardDownActive = false;
+    swapHeldActive = false;
   }
 
   public void update() {
-    rotateActive = gpad.getSlider("YPOS").getValue() < -0.5;
+    if (gpad == null) return;
+
+    rotateActive = gpad.getButton("A").pressed();
+    counterRotateActive = gpad.getButton("B").pressed();
     downActive = gpad.getSlider("YPOS").getValue() > 0.5;
     leftActive = gpad.getSlider("XPOS").getValue() < -0.5;
     rightActive = gpad.getSlider("XPOS").getValue() > 0.5;
-    hardDownActive = gpad.getButton("A").pressed();
-    swapHeldActive = gpad.getButton("B").pressed();
+    hardDownActive = gpad.getSlider("YPOS").getValue() < -0.5;
+    swapHeldActive = gpad.getButton("SELECT").pressed();
   }
 }

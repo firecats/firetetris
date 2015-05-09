@@ -8,6 +8,7 @@ class GameInputController {
   GamepadGameInput gamepadInput;
 
   CommandDelayManager rotateCommandManager;
+  CommandDelayManager counterRotateCommandManager;
   CommandDelayManager downCommandManager;
   CommandDelayManager leftCommandManager;
   CommandDelayManager rightCommandManager;
@@ -22,6 +23,7 @@ class GameInputController {
     aggregateInput.gameInputs.add(gamepadInput);
 
     rotateCommandManager = new CommandDelayManager();
+    counterRotateCommandManager = new CommandDelayManager();
     downCommandManager = new CommandDelayManager();
     leftCommandManager = new CommandDelayManager();
     rightCommandManager = new CommandDelayManager();
@@ -35,6 +37,7 @@ class GameInputController {
     aggregateInput.update();
 
     if (rotateCommandManager.isTriggered(aggregateInput.rotateActive)) game.rotate();
+    if (counterRotateCommandManager.isTriggered(aggregateInput.counterRotateActive)) game.counterRotate();
     if (downCommandManager.isTriggered(aggregateInput.downActive)) game.down();
     if (leftCommandManager.isTriggered(aggregateInput.leftActive)) game.left();
     if (rightCommandManager.isTriggered(aggregateInput.rightActive)) game.right();

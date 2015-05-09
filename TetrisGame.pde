@@ -179,6 +179,25 @@ class TetrisGame {
     }
   }
   
+  public void counterRotate() {
+    if (current == null) return;
+
+    Shape rotated = current.shape.counterRotated();
+    int currentX = current.x;
+    int currentY = current.y;
+    
+    if (isLegal(rotated, currentX, currentY)) {
+      current.shape = rotated;
+      current.final_row = getFinalRow();
+    } else if (isLegal(rotated, currentX + 1, currentY) || isLegal(rotated, currentX + 2, currentY)) {
+      current.shape = rotated;
+      right();
+    } else if (isLegal(rotated, currentX - 1, currentY) || isLegal(rotated, currentX - 2, currentY)) {
+      current.shape = rotated;
+      left();
+    }
+  }
+  
   public void swapHeldPiece() {
     if (heldUsed) return;
     
