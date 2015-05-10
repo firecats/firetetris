@@ -6,7 +6,6 @@ class Audio {
   
   Audio(Minim minim) {
     music = minim.loadFile("Tetris_theme.mp3");
-    music.loop();
     
     rotate = minim.loadSample("rotate.wav");
     place = minim.loadSample("place.wav");
@@ -15,7 +14,7 @@ class Audio {
   
   public void playMusic() {
     music.rewind();
-    music.play();
+    music.loop();
   }
   
   public void stopMusic() {

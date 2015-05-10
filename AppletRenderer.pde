@@ -6,10 +6,13 @@ class AppletRenderer implements ControlListener {
   private final GridView previewView;
   private final GridView heldPieceView;
   
+  private Button btn;
+  
   AppletRenderer() {
     size(500, 690, PApplet.P2D);
     textSize(25);
-    Button btn = controlP5.addButton("play", 1, width/2 - 35, height/2, 70, 20);
+    
+    btn = controlP5.addButton("play", 1, width/2 - 35, height/2, 70, 20);
     btn.setLabel("play again");
     btn.addListener(this);
     
@@ -28,8 +31,10 @@ class AppletRenderer implements ControlListener {
     if (currentGame.isGameOver()) {
       text("GAME OVER\nSCORE: " + currentGame.getScore(), width/2 - 70, height/2 - 50);
       controlP5.draw(); // show the play again button
+      btn.setVisible(true);
       return;
     }
+    btn.setVisible(false);
     
     boardView.rows = currentGame.getGrid().rows;
     boardView.cols = currentGame.getGrid().cols;

@@ -102,6 +102,10 @@ class TetrisGame {
   }
 
   public void update() {
+    if(gameOver) {
+      return;
+    }
+    
     if (animateCount >= 0) {
       animateCount--;
       
