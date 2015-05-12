@@ -22,7 +22,7 @@ public void setup() {
   size(500, 690, PApplet.P2D); // Must be the first call in setup()
 
   controlP5 = new ControlP5(this);
-  inputController = new GameInputController(this);
+  inputController = new GameInputController(this, config);
   renderer = new AppletRenderer();
   udpRenderer = new UDPRenderer(config);
   newGame();

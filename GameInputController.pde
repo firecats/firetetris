@@ -5,7 +5,6 @@ class GameInputController {
 
   CompositeGameInput aggregateInput;
   KeyboardGameInput keyboardInput;
-  GamepadGameInput gamepadInput;
 
   CommandDelayManager rotateCommandManager;
   CommandDelayManager counterRotateCommandManager;
@@ -15,12 +14,16 @@ class GameInputController {
   CommandDelayManager hardDownCommandManager;
   CommandDelayManager swapHeldCommandManager;
 
-  GameInputController(PApplet applet) {
-    keyboardInput = new KeyboardGameInput();
-    gamepadInput = new GamepadGameInput(applet);
+  GameInputController(PApplet applet, Config config) {
     aggregateInput = new CompositeGameInput();
+    
+    keyboardInput = new KeyboardGameInput();
     aggregateInput.gameInputs.add(keyboardInput);
-    aggregateInput.gameInputs.add(gamepadInput);
+    
+    if (config.gamepadConfiguration != "") {
+      GamepadGameInput gamepadInput = new GamepadGameInput(config.gamepadConfiguration, applet);
+      aggregateInput.gameInputs.add(gamepadInput);
+    }
 
     rotateCommandManager = new CommandDelayManager();
     counterRotateCommandManager = new CommandDelayManager();
