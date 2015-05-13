@@ -6,7 +6,7 @@ class GamepadGameInput extends GameInput {
   GamepadGameInput(String config, PApplet applet) {
     control = ControlIO.getInstance(applet);
     // Find a device that matches the configuration file
-    gpad = control.getMatchedDevice("nes_controller");
+    gpad = control.getMatchedDevice(config);
 
     rotateActive = false;
     counterRotateActive = false;
