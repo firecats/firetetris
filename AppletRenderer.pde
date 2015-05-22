@@ -9,7 +9,6 @@ class AppletRenderer implements ControlListener {
   private Button btnPlayAgain;
   
   AppletRenderer() {
-    size(500, 690, PApplet.P2D);
     textSize(25);
     
     btnPlayAgain = controlP5.addButton("play", 1, width/2 - 35, height/2, 70, 20);

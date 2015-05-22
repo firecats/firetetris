@@ -15,11 +15,15 @@ Config config;
 AppletRenderer renderer;
 UDPRenderer udpRenderer;
 TetrisGame currentGame;
+GameInputController inputController;
 ControlP5 controlP5;
 Minim minim;
 
 public void setup() {
+  size(500, 690, PApplet.P2D); // Must be the first call in setup()
+
   controlP5 = new ControlP5(this);
+  inputController = new GameInputController(this, config);
   renderer = new AppletRenderer();
   udpRenderer = new UDPRenderer(config);
   
@@ -27,25 +31,22 @@ public void setup() {
   
   newGame();
   color a = color(1,1,1);
+
 }
 
 public void draw() {
+  inputController.update(currentGame);
   currentGame.update();
   renderer.renderGameState(currentGame);
   udpRenderer.renderGameState(currentGame);
 }
 
 public void keyPressed() {
-  if (currentGame.isGameOver()) return;
-  
-  switch(keyCode) {
-  case LEFT : currentGame.left(); break;
-  case RIGHT : currentGame.right(); break;
-  case UP : currentGame.rotate(); break;
-  case DOWN : currentGame.down(); break;
-  case SHIFT: currentGame.swapHeldPiece(); break;
-  case ' ' : currentGame.hardDown(); break;
-  }
+  inputController.keyPressed();
+}
+
+public void keyReleased() {
+  inputController.keyReleased();
 }
 
 public void newGame() {
