@@ -8,19 +8,23 @@
   UP - flip
   SPACE - hard drop (drop immediately)
  */
-
-import processing.core.*;
+ 
+import ddf.minim.*;
 
 Config config;
 AppletRenderer renderer;
 UDPRenderer udpRenderer;
 TetrisGame currentGame;
 ControlP5 controlP5;
+Minim minim;
 
 public void setup() {
   controlP5 = new ControlP5(this);
   renderer = new AppletRenderer();
   udpRenderer = new UDPRenderer(config);
+  
+  minim = new Minim(this);
+  
   newGame();
   color a = color(1,1,1);
 }
@@ -45,5 +49,6 @@ public void keyPressed() {
 }
 
 public void newGame() {
-  currentGame = new TetrisGame();
+  minim.stop();
+  currentGame = new TetrisGame(minim);
 }

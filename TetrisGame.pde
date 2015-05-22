@@ -5,6 +5,7 @@ class TetrisGame {
 
   // Game properties
   private Tetromino current;
+  private Audio audio;
   private ArrayList<Shape> nextShapes;
   private Shape held;
   private boolean heldUsed;
@@ -27,7 +28,7 @@ class TetrisGame {
   // Countdown for animation. Animation lasts for 20 frames.
   private int animateCount;
 
-  TetrisGame() {
+  TetrisGame(Minim minim) {
     shapes[0] = new Shape(4, new int[] {4,5,6,7}, color(0, 255, 255), 0);   // I
     shapes[1] = new Shape(3, new int[] {1,2,3,4}, color(0,255,0), 1);       // S
     shapes[2] = new Shape(3, new int[] {0,1,4,5}, color(255,0,0), 2);     // Z
@@ -43,6 +44,9 @@ class TetrisGame {
 
     currTime = 0;
     animateCount = -1;
+    
+    audio = new Audio(minim);
+    audio.playMusic();
   }
 
   public Tetromino getCurrent() {
@@ -98,6 +102,10 @@ class TetrisGame {
   }
 
   public void update() {
+    if(gameOver) {
+      return;
+    }
+    
     if (animateCount >= 0) {
       animateCount--;
       
@@ -177,6 +185,8 @@ class TetrisGame {
       current.shape = rotated;
       left();
     }
+    
+    audio.playRotate();
   }
   
   public void swapHeldPiece() {
@@ -196,11 +206,13 @@ class TetrisGame {
           grid.colors[i + current.x][j + current.y] = current.shape.c;
     
     if (checkLines()) {
+      audio.playLine();
       // Start "rows cleared" animation, next piece will be loaded at end of animation 
       animateCount = ANIMATION_LENGTH;
       current = null;
     } else {
-      loadNext();     
+      audio.playPlace();
+      loadNext();    
     }
     
     heldUsed = false;
@@ -238,6 +250,10 @@ class TetrisGame {
     current = new Tetromino(shape);
     current.final_row = getFinalRow();
     gameOver = !isLegal(current.shape, 3, -1);
+    
+    if(gameOver) {
+      audio.stopMusic();
+    }
   }
 
   private int getFinalRow() {

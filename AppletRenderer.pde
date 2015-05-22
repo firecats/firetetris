@@ -1,4 +1,3 @@
-import processing.core.*;
 import controlP5.*;
 
 class AppletRenderer implements ControlListener {
@@ -7,12 +6,15 @@ class AppletRenderer implements ControlListener {
   private final GridView previewView;
   private final GridView heldPieceView;
   
+  private Button btnPlayAgain;
+  
   AppletRenderer() {
     size(500, 690, PApplet.P2D);
     textSize(25);
-    Button btn = controlP5.addButton("play", 1, width/2 - 35, height/2, 70, 20);
-    btn.setLabel("play again");
-    btn.addListener(this);
+    
+    btnPlayAgain = controlP5.addButton("play", 1, width/2 - 35, height/2, 70, 20);
+    btnPlayAgain.setLabel("play again");
+    btnPlayAgain.addListener(this);
     
     boardView = new GridView(20, 20, 321, 642);
     heldPieceView = new GridView(355, 20, 116, 58);
@@ -29,8 +31,10 @@ class AppletRenderer implements ControlListener {
     if (currentGame.isGameOver()) {
       text("GAME OVER\nSCORE: " + currentGame.getScore(), width/2 - 70, height/2 - 50);
       controlP5.draw(); // show the play again button
+      btnPlayAgain.setVisible(true);
       return;
     }
+    btnPlayAgain.setVisible(false);
     
     boardView.rows = currentGame.getGrid().rows;
     boardView.cols = currentGame.getGrid().cols;

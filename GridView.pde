@@ -1,5 +1,3 @@
-import processing.core.*;
-
 class GridView {
   final int x, y, width, height;
   int cols, rows;
