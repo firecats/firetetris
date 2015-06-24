@@ -5,7 +5,7 @@ class Audio {
   AudioSample rotate, place, line;
   
   Audio(Minim minim) {
-    music = minim.loadFile("Tetris_theme.mp3");
+    music = minim.loadFile("placeholder.mp3");
     
     rotate = minim.loadSample("rotate.wav");
     place = minim.loadSample("place.wav");
