@@ -5,6 +5,7 @@ static class Config {
   static int backendPort = 1075;
   static int protocolVersion = 0;
 
-  static String gamepadConfiguration = "nes_controller_mac";
+  //static String gamepadConfiguration = "nes_controller_mac";
+  static String gamepadConfiguration = "";
 }
 
