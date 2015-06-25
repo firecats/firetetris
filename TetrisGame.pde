@@ -6,11 +6,10 @@ class TetrisGame extends InputHandler {
   // Game properties
   private Tetromino current;
   private Audio audio;
-  private ArrayList<Shape> nextShapes;
   private Shape held;
   private boolean heldUsed;
   private Grid grid;
-  private Shape[] shapes = new Shape[7];
+  private NextPieceProvider nextPieceProvider;
   private ArrayList<ScoreValue> scoreValues;
   private ArrayList<GameMod> mods = new ArrayList<GameMod>();
 
@@ -36,15 +35,8 @@ class TetrisGame extends InputHandler {
   private int animateCount;
 
   TetrisGame(Audio aAudio) {
-    shapes[0] = new Shape(4, new int[] {4,5,6,7}, color(0, 255, 255), 0);   // I
-    shapes[1] = new Shape(3, new int[] {1,2,3,4}, color(0,255,0), 1);       // S
-    shapes[2] = new Shape(3, new int[] {0,1,4,5}, color(255,0,0), 2);     // Z
-    shapes[3] = new Shape(3, new int[] {0,3,4,5}, color(0,0,255), 3);     // J
-    shapes[4] = new Shape(3, new int[] {2,3,4,5}, color(255,165,0), 4);   // L
-    shapes[5] = new Shape(3, new int[] {1,3,4,5}, color(160,32,240), 5);  // T
-    shapes[6] = new Shape(2, new int[] {0,1,2,3}, color(255,255,0), 6);   // O
-    nextShapes = new ArrayList<Shape>();
-    
+    nextPieceProvider = new StandardNextPieceProvider();
+
     grid = new Grid(TETRIS_HEIGHT, TETRIS_WIDTH);
 
     loadNext();
@@ -83,7 +75,7 @@ class TetrisGame extends InputHandler {
   }
 
   public ArrayList<Shape> getNextShapes() {
-    return nextShapes;
+    return nextPieceProvider.getNextShapes();
   }
 
   public Grid getGrid() {
@@ -332,9 +324,9 @@ class TetrisGame extends InputHandler {
     if (heldUsed || current == null) return;
     
     int currentShapeId = current.shape.shapeId;
-    if (held == null) held = nextShapes.remove(0);
+    if (held == null) held = nextPieceProvider.takeNextShape();
     insertShape(held);
-    held = shapes[currentShapeId];
+    held = TETRIS_SHAPES[currentShapeId];
     
     heldUsed = true;
   }
@@ -438,17 +430,7 @@ class TetrisGame extends InputHandler {
   // Calls insertShape, which pops the first shape from this queue and initializes 
   // the current tetromino based on this shape.
   private void loadNext() {
-    while (nextShapes.size() < shapes.length) {
-      ArrayList<Shape> newShapes = new ArrayList<Shape>();
-      for (int i = 0; i < shapes.length; ++i) {
-        newShapes.add(new Shape(shapes[i]));
-      }
-      while (!newShapes.isEmpty()) {
-        nextShapes.add(newShapes.remove((int)(Math.random() * newShapes.size())));
-      }
-    }
-    
-    insertShape(nextShapes.remove(0));
+    insertShape(nextPieceProvider.takeNextShape());
   }
 
   // Initializes the current tetromino, assigns its final row

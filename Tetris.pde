@@ -13,6 +13,15 @@ import ddf.minim.*;
 
 final static int TETRIS_WIDTH = 10;
 final static int TETRIS_HEIGHT = 20;
+final Shape[] TETRIS_SHAPES = new Shape[] {
+  new Shape(4, new int[] {4,5,6,7}, color(0, 255, 255), 0),   // I
+  new Shape(3, new int[] {1,2,3,4}, color(0,255,0), 1),       // S
+  new Shape(3, new int[] {0,1,4,5}, color(255,0,0), 2),       // Z
+  new Shape(3, new int[] {0,3,4,5}, color(0,0,255), 3),       // J
+  new Shape(3, new int[] {2,3,4,5}, color(255,165,0), 4),     // L
+  new Shape(3, new int[] {1,3,4,5}, color(160,32,240), 5),    // T
+  new Shape(2, new int[] {0,1,2,3}, color(255,255,0), 6)      // O
+};
 
 Config config;
 AppletRenderer renderer;
