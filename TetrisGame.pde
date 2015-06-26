@@ -209,7 +209,7 @@ class TetrisGame {
   }
   
   public void swapHeldPiece() {
-    if (heldUsed) return;
+    if (heldUsed || current == null) return;
     
     int currentShapeId = current.shape.shapeId;
     insertShape(held);
