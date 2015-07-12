@@ -54,7 +54,9 @@ class AppletRenderer implements ControlListener {
     if (!currentGame.isHeldUsed()) {
       heldPieceView.drawOutline();
     }
-    heldPieceView.drawShape(currentGame.getHeld(), 0, -currentGame.getHeld().getFirstNonEmptyRow());
+    if (currentGame.getHeld() != null) {
+      heldPieceView.drawShape(currentGame.getHeld(), 0, -currentGame.getHeld().getFirstNonEmptyRow());
+    }
     
     fill(255);
     
