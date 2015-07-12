@@ -15,7 +15,7 @@ class GridView {
     fill(0);
     stroke(255);
     strokeWeight(2);
-    rect(x, y, width, height);
+    rect(x-1, y-1, width+2, height+2);
     
     popStyle();
   }

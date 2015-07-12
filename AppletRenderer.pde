@@ -15,11 +15,11 @@ class AppletRenderer implements ControlListener {
     btnPlayAgain.setLabel("play again");
     btnPlayAgain.addListener(this);
     
-    boardView = new GridView(20, 20, 321, 642);
-    heldPieceView = new GridView(355, 20, 116, 58);
+    boardView = new GridView(146, 33, 300, 600);
+    heldPieceView = new GridView(12, 33, 120, 60);
     heldPieceView.rows = 2;
     heldPieceView.cols = 4;
-    previewView = new GridView(355, 88, 116, 193);
+    previewView = new GridView(460, 33, 90, 150);
     previewView.rows = 10;
     previewView.cols = 6;
   }
@@ -58,9 +58,17 @@ class AppletRenderer implements ControlListener {
     
     fill(255);
     
-    text("LEVEL\n" + currentGame.getLevel(), width - 150, 340);
-    text("LINES\n" + currentGame.getLines(), width - 150, 400);
-    text("SCORE\n" + currentGame.getScore(), width - 150, 480);
+    text("HELD", 10, 28);
+    text("NEXT", 460, 28);
+
+    text("LEVEL", 460, 221);
+    text(currentGame.getLevel(), 460, 244);
+
+    text("LINES", 460, 272);
+    text(currentGame.getLines(), 460, 295);
+
+    text("SCORE", 460, 323);
+    text(currentGame.getScore(), 460, 346);
   }
 
   @Override
