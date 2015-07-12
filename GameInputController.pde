@@ -6,13 +6,13 @@ class GameInputController {
   CompositeGameInput aggregateInput;
   KeyboardGameInput keyboardInput;
 
-  CommandDelayManager rotateCommandManager;
-  CommandDelayManager counterRotateCommandManager;
-  CommandDelayManager downCommandManager;
-  CommandDelayManager leftCommandManager;
-  CommandDelayManager rightCommandManager;
-  CommandDelayManager hardDownCommandManager;
-  CommandDelayManager swapHeldCommandManager;
+  CommandManager rotateCommandManager;
+  CommandManager counterRotateCommandManager;
+  CommandManager downCommandManager;
+  CommandManager leftCommandManager;
+  CommandManager rightCommandManager;
+  CommandManager hardDownCommandManager;
+  CommandManager swapHeldCommandManager;
 
   GameInputController(PApplet applet, Config config) {
     aggregateInput = new CompositeGameInput();
@@ -25,13 +25,13 @@ class GameInputController {
       aggregateInput.gameInputs.add(gamepadInput);
     }
 
-    rotateCommandManager = new CommandDelayManager();
-    counterRotateCommandManager = new CommandDelayManager();
+    rotateCommandManager = new ArmedCommandManager();
+    counterRotateCommandManager = new ArmedCommandManager();
     downCommandManager = new CommandDelayManager();
     leftCommandManager = new CommandDelayManager();
     rightCommandManager = new CommandDelayManager();
-    hardDownCommandManager = new CommandDelayManager();
-    swapHeldCommandManager = new CommandDelayManager();
+    hardDownCommandManager = new ArmedCommandManager();
+    swapHeldCommandManager = new ArmedCommandManager();
   }
 
   public void update(TetrisGame game) {
@@ -58,9 +58,21 @@ class GameInputController {
 }
 
 /*
+  Controls how often commands should be executed based on input activity.
+*/
+class CommandManager {
+
+  /*
+    active - if the input is active right now
+    returns - if the command should be triggered now
+  */
+  public boolean isTriggered(boolean active) { return false; }
+}
+
+/*
   Controls the "delay" of sending keypresses for standardization between input methods.
 */
-class CommandDelayManager {
+class CommandDelayManager extends CommandManager {
     private int[] delayValues;
     private int delayIndex;
     private int currentDelay;
@@ -90,5 +102,22 @@ class CommandDelayManager {
         delayIndex = -1;
         return false;
       }
+    }
+}
+
+/*
+  Prevents a command from auto-repeating. The input must be released to be re-armed and then activated to be triggered.
+*/
+class ArmedCommandManager extends CommandManager {
+    private boolean wasActive;
+
+    ArmedCommandManager() {
+      wasActive = false;
+    }
+
+    public boolean isTriggered(boolean active) {
+      boolean isTriggered = active && !wasActive;
+      wasActive = active;
+      return isTriggered;
     }
 }
