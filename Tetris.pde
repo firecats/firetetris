@@ -28,15 +28,11 @@ public void setup() {
   udpRenderer = new UDPRenderer(config);
   
   minim = new Minim(this);
-  
-  newGame();
-  color a = color(1,1,1);
-
 }
 
 public void draw() {
   inputController.update(currentGame);
-  currentGame.update();
+  if (currentGame != null) currentGame.update();
   renderer.renderGameState(currentGame);
   udpRenderer.renderGameState(currentGame);
 }

@@ -15,6 +15,8 @@ class UDPRenderer {
   }
   
   void renderGameState(TetrisGame currentGame) {
+    if (currentGame == null) return;
+    
     Grid grid = currentGame.getGrid();
     Packet packet = new Packet(this.config.protocolVersion, grid.cols, grid.rows);
     

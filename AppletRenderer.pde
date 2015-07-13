@@ -5,15 +5,9 @@ class AppletRenderer implements ControlListener {
   private final GridView boardView;
   private final GridView previewView;
   private final GridView heldPieceView;
-  
-  private Button btnPlayAgain;
-  
+
   AppletRenderer() {
     textSize(25);
-    
-    btnPlayAgain = controlP5.addButton("play", 1, width/2 - 35, height/2, 70, 20);
-    btnPlayAgain.setLabel("play again");
-    btnPlayAgain.addListener(this);
     
     boardView = new GridView(146, 33, 300, 600);
     heldPieceView = new GridView(12, 33, 120, 60);
@@ -26,14 +20,24 @@ class AppletRenderer implements ControlListener {
 
   void renderGameState(TetrisGame currentGame) {
     background(0);
-    
-    if (currentGame.isGameOver()) {
-      text("GAME OVER\nSCORE: " + currentGame.getScore(), width/2 - 70, height/2 - 50);
-      controlP5.draw(); // show the play again button
-      btnPlayAgain.setVisible(true);
+
+    if (currentGame == null || currentGame.isGameOver()) {
+      pushStyle();
+
+      textAlign(CENTER, BOTTOM);
+      textSize(18);
+      text("(press enter to begin)", width/2, height/2);
+
+      textSize(25);
+      if (currentGame == null) {
+        text("READY TO PLAY", width/2, height/2 - 35);
+      } else if (currentGame.isGameOver()) {
+        text("GAME OVER\nSCORE: " + currentGame.getScore(), width/2, height/2 - 50);
+      }
+
+      popStyle();
       return;
     }
-    btnPlayAgain.setVisible(false);
     
     boardView.rows = currentGame.getGrid().rows;
     boardView.cols = currentGame.getGrid().cols;

@@ -6,6 +6,7 @@ class GameInputController {
   CompositeGameInput aggregateInput;
   KeyboardGameInput keyboardInput;
 
+  CommandManager newGameCommandManager;
   CommandManager rotateCommandManager;
   CommandManager counterRotateCommandManager;
   CommandManager downCommandManager;
@@ -25,6 +26,7 @@ class GameInputController {
       aggregateInput.gameInputs.add(gamepadInput);
     }
 
+    newGameCommandManager = new ArmedCommandManager();
     rotateCommandManager = new ArmedCommandManager();
     counterRotateCommandManager = new ArmedCommandManager();
     downCommandManager = new CommandDelayManager();
@@ -35,12 +37,11 @@ class GameInputController {
   }
 
   public void update(TetrisGame game) {
-    if (game == null) return;
-
     aggregateInput.update();
 
-    // Game commands, only active if the game isn't over
-    if (!game.isGameOver()) {
+    if (game == null || game.isGameOver()) {
+      if (newGameCommandManager.isTriggered(aggregateInput.newGameActive)) newGame();
+    } else {
       if (rotateCommandManager.isTriggered(aggregateInput.rotateActive)) game.rotate();
       if (counterRotateCommandManager.isTriggered(aggregateInput.counterRotateActive)) game.counterRotate();
       if (downCommandManager.isTriggered(aggregateInput.downActive)) game.down();
