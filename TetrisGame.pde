@@ -18,6 +18,8 @@ class TetrisGame {
   private int currTime = 0;
 
   // Scoring properties
+  private boolean lastScoreWasSpecial;
+  private boolean lastMoveWasRotate;
   private int score;
   private int lines;
   private int level;
@@ -39,6 +41,7 @@ class TetrisGame {
     nextShapes = new ArrayList<Shape>();
     
     grid = new Grid(20, 10);
+
     loadNext();
     held = nextShapes.remove(0);
 
@@ -47,6 +50,10 @@ class TetrisGame {
     
     audio = new Audio(minim);
     audio.playMusic();
+
+    level = 1;
+    lastScoreWasSpecial = false;
+    lastMoveWasRotate = false;
   }
 
   public Tetromino getCurrent() {
@@ -126,7 +133,7 @@ class TetrisGame {
         currTime = -20;
     }
   }
-    
+  
   public void down() {
     if (current == null) return;
 
@@ -135,8 +142,9 @@ class TetrisGame {
       finalizeShapePlacement();
     } else {
       stepDown();
-      score += 1;  // get a point for manual down
     }
+
+    lastMoveWasRotate = false;
   }
   
   public void left() {
@@ -147,6 +155,8 @@ class TetrisGame {
     else if (isLegal(current.shape, current.x - 2, current.y))
       current.x -= 2;
     current.final_row = getFinalRow();
+
+    lastMoveWasRotate = false;
   }
 
   public void right() {
@@ -157,15 +167,18 @@ class TetrisGame {
     else if (isLegal(current.shape, current.x + 2, current.y))
       current.x += 2;
     current.final_row = getFinalRow();
+
+    lastMoveWasRotate = false;
   }
 
   // move block all the way to the bottom
   public void hardDown() {
     if (current == null) return;
 
-    score += (grid.rows - current.y);
     current.y = current.final_row;
     finalizeShapePlacement();
+
+    lastMoveWasRotate = false;
   }
 
   public void rotate() {
@@ -187,6 +200,8 @@ class TetrisGame {
     }
     
     audio.playRotate();
+
+    lastMoveWasRotate = true;
   }
   
   public void counterRotate() {
@@ -206,6 +221,10 @@ class TetrisGame {
       current.shape = rotated;
       left();
     }
+     
+     audio.playRotate();
+
+    lastMoveWasRotate = true;
   }
   
   public void swapHeldPiece() {
@@ -231,7 +250,7 @@ class TetrisGame {
       current = null;
     } else {
       audio.playPlace();
-      loadNext();    
+      loadNext();
     }
     
     heldUsed = false;
@@ -239,16 +258,53 @@ class TetrisGame {
 
   private boolean checkLines() {
     grid.updatedClearedRows();
-    if (grid.clearedRows.isEmpty())
+    if (grid.clearedRows.isEmpty()) {
+      lastScoreWasSpecial = false;
       return false;
+    }
 
     if (lines/10 < (lines + grid.clearedRows.size())/10) {
       level++;
       timer -= SPEED_DECREASE;
     }
     lines += grid.clearedRows.size();
-    score += (1 << grid.clearedRows.size() - 1)*100;
+
+    // Update scoring
+    int scoreMultiplier = 1;
+    boolean tspinAchieved = isTSpin();
+    switch (grid.clearedRows.size()) {
+      case 1: scoreMultiplier = (tspinAchieved ? 4 : 1); break;
+      case 2: scoreMultiplier = (tspinAchieved ? 8 : 2); break;
+      case 3: scoreMultiplier = (tspinAchieved ? 12 : 5); break;
+      case 4: scoreMultiplier = 8; break; // TSpin can fill 3 rows maximum
+    }
+
+    boolean specialAchieved = (tspinAchieved || grid.clearedRows.size() == 4);
+    if (specialAchieved && lastScoreWasSpecial) scoreMultiplier *= 1.5;
+
+    score += 100 * scoreMultiplier * level;
+
+    lastScoreWasSpecial = specialAchieved;
+
     return true;
+  }
+
+  private boolean isTSpin() {
+    // Following tetris DS rules from : http://tetris.wikia.com/wiki/T-Spin
+    
+    // 1. Last piece placed must be a T
+    if (current.shape.shapeId != 5) return false;
+    
+    // 2. Last move was a rotatione
+    if (!lastMoveWasRotate) return false;
+
+    // 3. At least 3 corners around the T are filled.
+    int cornersFilled = 0;
+    if (grid.isOccupied(current.x, current.y)) ++cornersFilled;
+    if (grid.isOccupied(current.x, current.y + 2)) ++cornersFilled;
+    if (grid.isOccupied(current.x + 2, current.y + 2)) ++cornersFilled;
+    if (grid.isOccupied(current.x + 2, current.y)) ++cornersFilled;
+    return cornersFilled >= 3;
   }
 
   private void loadNext() {
