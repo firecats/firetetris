@@ -195,49 +195,33 @@ class TetrisGame {
 
   public void rotate() {
     if (current == null) return;
-
-    Shape rotated = current.shape.rotated();
-    int currentX = current.x;
-    int currentY = current.y;
-    boolean wasRotated = true;
-
-    if (isLegal(rotated, currentX, currentY)) {
-      // Nothing to do
-    } else if (isLegal(rotated, currentX + 1, currentY) || isLegal(rotated, currentX + 2, currentY)) {
-      current.x++;
-    } else if (isLegal(rotated, currentX - 1, currentY) || isLegal(rotated, currentX - 2, currentY)) {
-      current.x--;
-    } else {
-      wasRotated = false;
-    }
-    
-    if (wasRotated) {
-      current.shape = rotated;
-      current.final_row = getFinalRow();
-      audio.playRotate();
-      lastMoveWasRotate = true;
-      if (current.y == current.final_row) currTime = 0;
-    }
+    applyRotation(current.shape.rotated());
   }
   
   public void counterRotate() {
     if (current == null) return;
+    applyRotation(current.shape.counterRotated());
+  }
 
-    Shape rotated = current.shape.counterRotated();
+  private void applyRotation(Shape rotated) {
     int currentX = current.x;
     int currentY = current.y;
     boolean wasRotated = true;
 
     if (isLegal(rotated, currentX, currentY)) {
       // Nothing to do
-    } else if (isLegal(rotated, currentX + 1, currentY) || isLegal(rotated, currentX + 2, currentY)) {
+    } else if (isLegal(rotated, currentX + 1, currentY)) {
       current.x++;
-    } else if (isLegal(rotated, currentX - 1, currentY) || isLegal(rotated, currentX - 2, currentY)) {
+    } else if (isLegal(rotated, currentX - 1, currentY)) {
       current.x--;
+    } else if (isLegal(rotated, currentX + 2, currentY)) {
+      current.x += 2;
+    } else if (isLegal(rotated, currentX - 2, currentY)) {
+      current.x -= 2;
     } else {
       wasRotated = false;
     }
-     
+    
     if (wasRotated) {
       current.shape = rotated;
       current.final_row = getFinalRow();
