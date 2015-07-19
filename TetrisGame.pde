@@ -12,9 +12,9 @@ class TetrisGame {
   private Grid grid;
   private Shape[] shapes = new Shape[7];
 
-  // Timer is the interval between game "steps". Every 'timer' loops, the current block is moved down.
-  private int timer = 20;
-  // Represents the progress in 'timer'. Increased during every loop and reset when a block is .
+  // TIMER is the interval between game "steps". Every 'TIMER' loops, the current block is moved down.
+  private final int TIMER = 20;
+  // Represents the progress in 'TIMER'. Increased during every loop and reset when a block is stepped down.
   private int currTime = 0;
 
   // Scoring properties
@@ -92,6 +92,8 @@ class TetrisGame {
     return gameOver;
   }
 
+  // This is used as a TIMER for the "row clearing" animation. While rows are being cleared,
+  // the game is temporarily suspended and the next tetromino's loading is paused
   public int getAnimateCount() {
     return animateCount;
   }
@@ -108,14 +110,17 @@ class TetrisGame {
     }
   }
 
+  // The main game loop
   public void update() {
     if(gameOver) {
       return;
     }
     
+    // Pause for "row clearing" animation before the next piece is loaded
     if (animateCount >= 0) {
       animateCount--;
       
+      // Once it's done...
       if (animateCount < 0) {
         // clear the lines, and load the next Tetromino
         grid.eraseCleared();
@@ -125,15 +130,17 @@ class TetrisGame {
 
     currTime++;
     
-    if (currTime >= timer && animateCount < 0) {
+    if (currTime >= TIMER && animateCount < 0) {
       stepDown();
       
-      // reset the timer if player is at the bottom, for wiggle room before it locks
+      // reset the TIMER to a negative value if player is at the bottom,
+      // effectively doubling time for extra wiggle room before it locks
       if (current != null && current.y == current.final_row)
-        currTime = -20;
+        currTime = -TIMER;
     }
   }
   
+  // Callback for the player pressing "down"
   public void down() {
     if (current == null) return;
 
@@ -147,6 +154,7 @@ class TetrisGame {
     lastMoveWasRotate = false;
   }
   
+  // Callback for the player pressing "left"
   public void left() {
     if (current == null) return;
     
@@ -165,6 +173,7 @@ class TetrisGame {
     lastMoveWasRotate = false;
   }
 
+  // Callback for the player pressing "right"
   public void right() {
     if (current == null) return;
     
@@ -193,6 +202,8 @@ class TetrisGame {
     lastMoveWasRotate = false;
   }
 
+  // Rotates block clockwise, moving it by up to two grid units in either grid X direction
+  // if that permits the rotation to be legal where an in-place rotation would not
   public void rotate() {
     if (current == null) return;
 
@@ -220,6 +231,8 @@ class TetrisGame {
     }
   }
   
+  // Rotates block counterclockwise, moving it by up to two grid units in either grid X direction
+  // if that permits the rotation to be legal where an in-place rotation would not
   public void counterRotate() {
     if (current == null) return;
 
@@ -247,6 +260,9 @@ class TetrisGame {
     }
   }
   
+  // Allows the player (upon pressing SELECT) to swap the current 
+  // tetromino with the next piece from the queue. Can be used
+  // once per "turn" i.e. until the next piece is dequeued naturally.
   public void swapHeldPiece() {
     if (heldUsed) return;
     
@@ -257,6 +273,13 @@ class TetrisGame {
     heldUsed = true;
   }
   
+  // Copies the current shape into the grid (making it part of the
+  // level's collision)
+  // Locks the current piece in position, tests whether the player
+  // completed a line. 
+  // Loads the next piece.
+  //
+  // This expects that the current tetromino is at its final row.
   private void finalizeShapePlacement() {
     for (int i = 0; i < current.shape.matrix.length; ++i)
       for (int j = 0; j < current.shape.matrix.length; ++j)
@@ -277,15 +300,18 @@ class TetrisGame {
   }
 
   private boolean checkLines() {
+
+    // Test for a complete line
     grid.updatedClearedRows();
     if (grid.clearedRows.isEmpty()) {
       lastScoreWasSpecial = false;
       return false;
     }
 
+    // Increase game difficulty if enough lines cleared
     if (lines/10 < (lines + grid.clearedRows.size())/10) {
       level++;
-      timer -= SPEED_DECREASE;
+      TIMER -= SPEED_DECREASE;
     }
     lines += grid.clearedRows.size();
 
@@ -327,6 +353,9 @@ class TetrisGame {
     return cornersFilled >= 3;
   }
 
+  // Fills nextShapes with an equitably distributed random selection of shapes.
+  // Calls insertShape, which pops the first shape from this queue and initializes 
+  // the current tetromino based on this shape.
   private void loadNext() {
     while (nextShapes.size() < shapes.length) {
       ArrayList<Shape> newShapes = new ArrayList<Shape>();
@@ -341,6 +370,7 @@ class TetrisGame {
     insertShape(nextShapes.remove(0));
   }
 
+  // Initializes the current tetromino, assigns its final row
   private void insertShape(Shape shape) {
     current = new Tetromino(shape);
     current.final_row = getFinalRow();
@@ -351,6 +381,9 @@ class TetrisGame {
     }
   }
 
+  // Based on the current position of the tetromino along the
+  // x-axis, finds the bottom-most row for it, i.e. the row
+  // that it would land on if it were hard-dropped
   private int getFinalRow() {
     int start = Math.max(0, current.y);
     for (int row = start; row <= grid.rows; ++row)
@@ -359,6 +392,9 @@ class TetrisGame {
     return -1;
   }
 
+  // Performs a collision test from a shape against the blocks 
+  // already in the grid. Returns true if there is no collision,
+  // false if there is.
   private boolean isLegal(Shape shape, int col, int row) {
     for (int i = 0; i < shape.matrix.length; ++i)
       for (int j = 0; j < shape.matrix.length; ++j)
