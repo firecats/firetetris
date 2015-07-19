@@ -20,6 +20,7 @@ class TetrisGame {
   // Scoring properties
   private boolean lastScoreWasSpecial;
   private boolean lastMoveWasRotate;
+  private boolean usedFloorKick;
   private int score;
   private int lines;
   private int level;
@@ -54,6 +55,7 @@ class TetrisGame {
     level = 1;
     lastScoreWasSpecial = false;
     lastMoveWasRotate = false;
+    usedFloorKick = false;
   }
 
   public Tetromino getCurrent() {
@@ -220,6 +222,7 @@ class TetrisGame {
     int currentX = current.x;
     int currentY = current.y;
     boolean wasRotated = true;
+    boolean wasFloorKicked = false;
 
     if (isLegal(rotated, currentX, currentY)) {
       // Nothing to do
@@ -231,6 +234,17 @@ class TetrisGame {
       current.x += 2;
     } else if (isLegal(rotated, currentX - 2, currentY)) {
       current.x -= 2;
+      // Floor kick
+    } else if (isLegal(rotated, currentX, currentY - 1)) {
+      current.y -= 1;
+      wasFloorKicked = true;
+    } else if (isLegal(rotated, currentX, currentY - 2)) {
+      current.y -= 2;
+      wasFloorKicked = true;
+    } else if (isLegal(rotated, currentX, currentY - 3)) {
+      current.y -= 3;
+      wasFloorKicked = true;
+      // No rotation possible
     } else {
       wasRotated = false;
     }
@@ -240,7 +254,18 @@ class TetrisGame {
       current.final_row = getFinalRow();
       audio.playRotate();
       lastMoveWasRotate = true;
-      if (current.y == current.final_row) currTime = 0;
+
+      // Reset lock delay after rotation
+      if (current.y == current.final_row) 
+      {
+        // But after floor kick is used, we stop resetting the
+        // lock delay, to prevent the piece from being kicked up
+        // ad infinitum
+        if (!usedFloorKick)
+          currTime = 0;
+
+        usedFloorKick = usedFloorKick || wasFloorKicked;
+      }
     }
   }
   
@@ -359,7 +384,8 @@ class TetrisGame {
     current = new Tetromino(shape);
     current.final_row = getFinalRow();
     gameOver = !isLegal(current.shape, 3, -1);
-    
+    usedFloorKick = false;
+
     if(gameOver) {
       audio.stopMusic();
     }
