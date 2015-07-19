@@ -40,7 +40,6 @@ class TetrisGame {
     
     grid = new Grid(20, 10);
     loadNext();
-    held = nextShapes.remove(0);
 
     currTime = 0;
     animateCount = -1;
@@ -212,6 +211,7 @@ class TetrisGame {
     if (heldUsed || current == null) return;
     
     int currentShapeId = current.shape.shapeId;
+    if (held == null) held = nextShapes.remove(0);
     insertShape(held);
     held = shapes[currentShapeId];
     
