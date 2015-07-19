@@ -225,7 +225,6 @@ class TetrisGame {
           grid.colors[i + current.x][j + current.y] = current.shape.c;
     
     if (checkLines()) {
-      audio.playLine();
       // Start "rows cleared" animation, next piece will be loaded at end of animation 
       animateCount = ANIMATION_LENGTH;
       current = null;
@@ -246,6 +245,10 @@ class TetrisGame {
       level++;
       timer -= SPEED_DECREASE;
     }
+
+    if (grid.clearedRows.size() == 4) audio.playTetris();
+    else audio.playLine();
+
     lines += grid.clearedRows.size();
     score += (1 << grid.clearedRows.size() - 1)*100;
     return true;
