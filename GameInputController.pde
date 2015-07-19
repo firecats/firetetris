@@ -39,13 +39,16 @@ class GameInputController {
 
     aggregateInput.update();
 
-    if (rotateCommandManager.isTriggered(aggregateInput.rotateActive)) game.rotate();
-    if (counterRotateCommandManager.isTriggered(aggregateInput.counterRotateActive)) game.counterRotate();
-    if (downCommandManager.isTriggered(aggregateInput.downActive)) game.down();
-    if (leftCommandManager.isTriggered(aggregateInput.leftActive)) game.left();
-    if (rightCommandManager.isTriggered(aggregateInput.rightActive)) game.right();
-    if (hardDownCommandManager.isTriggered(aggregateInput.hardDownActive)) game.hardDown();
-    if (swapHeldCommandManager.isTriggered(aggregateInput.swapHeldActive)) game.swapHeldPiece();
+    // Game commands, only active if the game isn't over
+    if (!game.isGameOver()) {
+      if (rotateCommandManager.isTriggered(aggregateInput.rotateActive)) game.rotate();
+      if (counterRotateCommandManager.isTriggered(aggregateInput.counterRotateActive)) game.counterRotate();
+      if (downCommandManager.isTriggered(aggregateInput.downActive)) game.down();
+      if (leftCommandManager.isTriggered(aggregateInput.leftActive)) game.left();
+      if (rightCommandManager.isTriggered(aggregateInput.rightActive)) game.right();
+      if (hardDownCommandManager.isTriggered(aggregateInput.hardDownActive)) game.hardDown();
+      if (swapHeldCommandManager.isTriggered(aggregateInput.swapHeldActive)) game.swapHeldPiece();
+    }
   }
 
   public void keyPressed() {
