@@ -12,9 +12,9 @@ class TetrisGame {
   private Grid grid;
   private Shape[] shapes = new Shape[7];
 
-  // TIMER is the interval between game "steps". Every 'TIMER' loops, the current block is moved down.
-  private final int TIMER = 20;
-  // Represents the progress in 'TIMER'. Increased during every loop and reset when a block is stepped down.
+  // timer is the interval between game "steps". Every 'timer' loops, the current block is moved down.
+  private int timer = 20;
+  // Represents the progress in 'timer'. Increased during every loop and reset when a block is stepped down.
   private int currTime = 0;
 
   // Scoring properties
@@ -92,7 +92,7 @@ class TetrisGame {
     return gameOver;
   }
 
-  // This is used as a TIMER for the "row clearing" animation. While rows are being cleared,
+  // This is used as a timer for the "row clearing" animation. While rows are being cleared,
   // the game is temporarily suspended and the next tetromino's loading is paused
   public int getAnimateCount() {
     return animateCount;
@@ -130,13 +130,13 @@ class TetrisGame {
 
     currTime++;
     
-    if (currTime >= TIMER && animateCount < 0) {
+    if (currTime >= timer && animateCount < 0) {
       stepDown();
       
-      // reset the TIMER to a negative value if player is at the bottom,
+      // reset the timer to a negative value if player is at the bottom,
       // effectively doubling time for extra wiggle room before it locks
       if (current != null && current.y == current.final_row)
-        currTime = -TIMER;
+        currTime = -timer;
     }
   }
   
@@ -295,7 +295,7 @@ class TetrisGame {
     // Increase game difficulty if enough lines cleared
     if (lines/10 < (lines + grid.clearedRows.size())/10) {
       level++;
-      TIMER -= SPEED_DECREASE;
+      timer -= SPEED_DECREASE;
     }
     lines += grid.clearedRows.size();
 
