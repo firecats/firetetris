@@ -20,7 +20,7 @@ ControlP5 controlP5;
 Minim minim;
 
 public void setup() {
-  size(500, 690, PApplet.P2D); // Must be the first call in setup()
+  size(562, 666, PApplet.P2D); // Must be the first call in setup()
 
   controlP5 = new ControlP5(this);
   inputController = new GameInputController(this, config);
