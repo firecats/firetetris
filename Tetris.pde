@@ -41,11 +41,26 @@ public void draw() {
   udpRenderer.renderGameState(currentGame);
 }
 
+boolean ctrlPressed = false;
+
 public void keyPressed() {
+  if (key == ESC) {
+    // Ignore escape being pressed. This prevents the default quit behavior.
+    key = 0;
+  } else if (char(keyCode) == 'Q' && ctrlPressed) {
+    exit();
+  } else if (keyCode == CONTROL) {
+    ctrlPressed = true;
+  }
+
   inputController.keyPressed();
 }
 
 public void keyReleased() {
+  if (keyCode == CONTROL) {
+    ctrlPressed = false;
+  }
+
   inputController.keyReleased();
 }
 
