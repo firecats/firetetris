@@ -20,13 +20,12 @@ class Grid {
 
   void eraseCleared() {
     for (int row : clearedRows) {
-      for (int j = row - 1; j > 0; --j) {
-        color[] rowCopy = new color[cols];
+      for (int j = row - 1; j >= 0; --j) {
         for (int i = 0; i < cols; ++i)
-          rowCopy[i] = colors[i][j];
-        for (int i = 0; i < cols; ++i)
-          colors[i][j + 1] = rowCopy[i];
-      } 
+          colors[i][j + 1] = colors[i][j];
+      }
+      for (int i = 0; i < cols; ++i)
+        colors[i][0] = 0;
     }
   }
 
