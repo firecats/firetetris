@@ -4,11 +4,13 @@ class UDPRenderer {
   
   private UDP udp;
   private Config config;
+  private int lastSendTime;
   
   private Grid grid;
   
   UDPRenderer(Config config) {
     this.config = config;
+    this.lastSendTime = 0;
     
     udp = new UDP(this);
     //udp.log(true);     //printout the connection activity
@@ -34,7 +36,10 @@ class UDPRenderer {
       packet.addGridData(flattenGrid);
     }
     
-    this.send(packet);  
+    if (millis() >= this.lastSendTime + this.config.udpSendDelay) {
+      this.lastSendTime = millis();
+      this.send(packet);
+    }
   }
   
   private void setGridData(boolean[][] flattenGrid, Grid grid) {
