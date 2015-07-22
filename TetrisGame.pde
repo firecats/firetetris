@@ -40,7 +40,7 @@ class TetrisGame {
     shapes[6] = new Shape(2, new int[] {0,1,2,3}, color(255,255,0), 6);   // O
     nextShapes = new ArrayList<Shape>();
     
-    grid = new Grid(20, 10);
+    grid = new Grid(TETRIS_HEIGHT, TETRIS_WIDTH);
 
     loadNext();
 

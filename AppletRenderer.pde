@@ -32,7 +32,10 @@ class AppletRenderer implements ControlListener {
       if (currentGame == null) {
         text("READY TO PLAY", width/2, height/2 - 35);
       } else if (currentGame.isGameOver()) {
-        text("GAME OVER\nSCORE: " + currentGame.getScore(), width/2, height/2 - 50);
+        text("GAME OVER", width/2, height/2 - 85);
+        textSize(20);
+        text("SCORE: " + currentGame.getScore(), width/2, height/2 - 60);
+        text("LINES: " + currentGame.getLines(), width/2, height/2 - 35);
       }
 
       popStyle();
