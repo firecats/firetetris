@@ -27,6 +27,12 @@ class GameInputController {
 
     rotateCommandManager = new ArmedCommandManager();
     counterRotateCommandManager = new ArmedCommandManager();
+
+    if (config.arduinoInputConfiguration != "") {
+      ArduinoGameInput arduinoGameInput = new ArduinoGameInput(config.arduinoInputConfiguration, applet);
+      aggregateInput.gameInputs.add(arduinoGameInput);
+    }
+
     downCommandManager = new CommandDelayManager();
     leftCommandManager = new CommandDelayManager();
     rightCommandManager = new CommandDelayManager();
