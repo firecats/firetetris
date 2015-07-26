@@ -2,14 +2,16 @@ class Audio {
   
   AudioPlayer music;
   
-  AudioSample rotate, place, line;
+  AudioSample rotate, place, line, tetris;
   
   Audio(Minim minim) {
     music = minim.loadFile("placeholder.mp3");
-    
-    rotate = minim.loadSample("rotate.wav");
-    place = minim.loadSample("place.wav");
-    line = minim.loadSample("line.wav");
+    music.setGain(-15);
+
+    rotate = minim.loadSample("rotate.aif");
+    place = minim.loadSample("place.aif");
+    line = minim.loadSample("line.aif");
+    tetris = minim.loadSample("tetris.aif");
   }
   
   public void playMusic() {
@@ -27,6 +29,10 @@ class Audio {
   
   public void playLine() {
     line.trigger();
+  }
+  
+  public void playTetris() {
+    tetris.trigger();
   }
   
   public void playPlace() {
