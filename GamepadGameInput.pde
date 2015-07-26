@@ -8,6 +8,7 @@ class GamepadGameInput extends GameInput {
     // Find a device that matches the configuration file
     gpad = control.getMatchedDevice(config);
 
+    newGameActive = false;
     rotateActive = false;
     counterRotateActive = false;
     downActive = false;
@@ -20,6 +21,7 @@ class GamepadGameInput extends GameInput {
   public void update() {
     if (gpad == null) return;
 
+    newGameActive = gpad.getButton("START").pressed();
     rotateActive = gpad.getButton("A").pressed();
     counterRotateActive = gpad.getButton("B").pressed();
     downActive = gpad.getSlider("YPOS").getValue() > 0.5;
