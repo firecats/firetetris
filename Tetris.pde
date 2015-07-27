@@ -69,4 +69,5 @@ public void keyReleased() {
 public void newGame() {
   minim.stop();
   currentGame = new TetrisGame(minim);
+  currentGame.addMod(new TimedMode(1000 * 60 * 3));
 }

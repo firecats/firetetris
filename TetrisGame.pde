@@ -1,3 +1,13 @@
+class ScoreValue {
+  public String displayName;
+  public int value;
+
+  ScoreValue(String displayName, int value) {
+    this.displayName = displayName;
+    this.value = value;
+  }
+}
+
 class TetrisGame {
   
   public final static int ANIMATION_LENGTH = 25;
@@ -11,6 +21,8 @@ class TetrisGame {
   private boolean heldUsed;
   private Grid grid;
   private Shape[] shapes = new Shape[7];
+  private ArrayList<ScoreValue> scoreValues;
+  private ArrayList<GameMod> mods = new ArrayList<GameMod>();
 
   // timer is the interval between game "steps". Every 'timer' loops, the current block is moved down.
   private int timer = 20;
@@ -21,9 +33,9 @@ class TetrisGame {
   private boolean lastScoreWasSpecial;
   private boolean lastMoveWasRotate;
   private boolean usedFloorKick;
-  private int score;
-  private int lines;
-  private int level;
+  private ScoreValue score = new ScoreValue("SCORE", 0);
+  private ScoreValue lines = new ScoreValue("LINES", 0);
+  private ScoreValue level = new ScoreValue("LEVEL", 1);
   
   // True if game is over, false otherwise.
   private boolean gameOver;
@@ -51,10 +63,14 @@ class TetrisGame {
     audio = new Audio(minim);
     audio.playMusic();
 
-    level = 1;
     lastScoreWasSpecial = false;
     lastMoveWasRotate = false;
     usedFloorKick = false;
+
+    scoreValues = new ArrayList<ScoreValue>();
+    scoreValues.add(level);
+    scoreValues.add(lines);
+    scoreValues.add(score);
   }
 
   public Tetromino getCurrent() {
@@ -78,15 +94,15 @@ class TetrisGame {
   }
 
   public int getScore() {
-    return score;
+    return score.value;
   }
 
   public int getLines() {
-    return lines;
+    return lines.value;
   }
 
   public int getLevel() {
-    return level;
+    return level.value;
   }
 
   public boolean isGameOver() {
@@ -97,6 +113,19 @@ class TetrisGame {
   // the game is temporarily suspended and the next tetromino's loading is paused
   public int getAnimateCount() {
     return animateCount;
+  }
+
+  public ArrayList<ScoreValue> getScoreValues() {
+    return scoreValues;
+  }
+
+  public void addMod(GameMod mod) {
+    mod.initialize(this);
+    mods.add(mod);
+  }
+
+  public void addScoreValue(ScoreValue scoreValue) {
+    scoreValues.add(scoreValue);
   }
 
   // used when automatically moving the block down.
@@ -138,6 +167,10 @@ class TetrisGame {
       // effectively doubling time for extra wiggle room before it locks
       if (current != null && current.y == current.final_row)
         currTime = -timer;
+    }
+
+    for (GameMod mod : mods) {
+      mod.update();
     }
   }
   
@@ -281,6 +314,13 @@ class TetrisGame {
     
     heldUsed = true;
   }
+
+  public void endGame() {
+    gameOver = true;
+    if(gameOver) {
+      audio.stopMusic();
+    }
+  }
   
   // Copies the current shape into the grid (making it part of the
   // level's collision)
@@ -317,15 +357,15 @@ class TetrisGame {
     }
 
     // Increase game difficulty if enough lines cleared
-    if (lines/10 < (lines + grid.clearedRows.size())/10) {
-      level++;
+    if (lines.value/10 < (lines.value + grid.clearedRows.size())/10) {
+      level.value++;
       timer -= SPEED_DECREASE;
     }
 
     if (grid.clearedRows.size() == 4) audio.playTetris();
     else audio.playLine();
 
-    lines += grid.clearedRows.size();
+    lines.value += grid.clearedRows.size();
 
     // Update scoring
     int scoreMultiplier = 1;
@@ -340,7 +380,7 @@ class TetrisGame {
     boolean specialAchieved = (tspinAchieved || grid.clearedRows.size() == 4);
     if (specialAchieved && lastScoreWasSpecial) scoreMultiplier *= 1.5;
 
-    score += 100 * scoreMultiplier * level;
+    score.value += 100 * scoreMultiplier * level.value;
 
     lastScoreWasSpecial = specialAchieved;
 
@@ -386,12 +426,8 @@ class TetrisGame {
   private void insertShape(Shape shape) {
     current = new Tetromino(shape);
     current.final_row = getFinalRow();
-    gameOver = !isLegal(current.shape, 3, -1);
     usedFloorKick = false;
-
-    if(gameOver) {
-      audio.stopMusic();
-    }
+    if (!isLegal(current.shape, 3, -1)) endGame();
   }
 
   // Based on the current position of the tetromino along the
