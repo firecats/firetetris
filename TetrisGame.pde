@@ -12,14 +12,15 @@ class TetrisGame {
   private Grid grid;
   private Shape[] shapes = new Shape[7];
 
-  // Timer is the interval between game "steps". Every 'timer' loops, the current block is moved down.
+  // timer is the interval between game "steps". Every 'timer' loops, the current block is moved down.
   private int timer = 20;
-  // Represents the progress in 'timer'. Increased during every loop and reset when a block is .
+  // Represents the progress in 'timer'. Increased during every loop and reset when a block is stepped down.
   private int currTime = 0;
 
   // Scoring properties
   private boolean lastScoreWasSpecial;
   private boolean lastMoveWasRotate;
+  private boolean usedFloorKick;
   private int score;
   private int lines;
   private int level;
@@ -40,7 +41,7 @@ class TetrisGame {
     shapes[6] = new Shape(2, new int[] {0,1,2,3}, color(255,255,0), 6);   // O
     nextShapes = new ArrayList<Shape>();
     
-    grid = new Grid(20, 10);
+    grid = new Grid(TETRIS_HEIGHT, TETRIS_WIDTH);
 
     loadNext();
 
@@ -53,6 +54,7 @@ class TetrisGame {
     level = 1;
     lastScoreWasSpecial = false;
     lastMoveWasRotate = false;
+    usedFloorKick = false;
   }
 
   public Tetromino getCurrent() {
@@ -91,6 +93,8 @@ class TetrisGame {
     return gameOver;
   }
 
+  // This is used as a timer for the "row clearing" animation. While rows are being cleared,
+  // the game is temporarily suspended and the next tetromino's loading is paused
   public int getAnimateCount() {
     return animateCount;
   }
@@ -107,14 +111,17 @@ class TetrisGame {
     }
   }
 
+  // The main game loop
   public void update() {
     if(gameOver) {
       return;
     }
     
+    // Pause for "row clearing" animation before the next piece is loaded
     if (animateCount >= 0) {
       animateCount--;
       
+      // Once it's done...
       if (animateCount < 0) {
         // clear the lines, and load the next Tetromino
         grid.eraseCleared();
@@ -127,12 +134,14 @@ class TetrisGame {
     if (currTime >= timer && animateCount < 0) {
       stepDown();
       
-      // reset the timer if player is at the bottom, for wiggle room before it locks
+      // reset the timer to a negative value if player is at the bottom,
+      // effectively doubling time for extra wiggle room before it locks
       if (current != null && current.y == current.final_row)
-        currTime = -20;
+        currTime = -timer;
     }
   }
   
+  // Callback for the player pressing "down"
   public void down() {
     if (current == null) return;
 
@@ -146,26 +155,40 @@ class TetrisGame {
     lastMoveWasRotate = false;
   }
   
+  // Callback for the player pressing "left"
   public void left() {
     if (current == null) return;
     
+    int distance = 0;
     if (isLegal(current.shape, current.x - 1, current.y))
-      current.x--;
+      distance = 1;
     else if (isLegal(current.shape, current.x - 2, current.y))
-      current.x -= 2;
-    current.final_row = getFinalRow();
+      distance = 2;
+
+    if (distance > 0) {
+      current.x -= distance;
+      current.final_row = getFinalRow();
+      if (current.y == current.final_row) currTime = 0;
+    }
 
     lastMoveWasRotate = false;
   }
 
+  // Callback for the player pressing "right"
   public void right() {
     if (current == null) return;
     
+    int distance = 0;
     if (isLegal(current.shape, current.x + 1, current.y))
-      current.x++;
+      distance = 1;
     else if (isLegal(current.shape, current.x + 2, current.y))
-      current.x += 2;
-    current.final_row = getFinalRow();
+      distance = 2;
+
+    if (distance > 0) {
+      current.x += distance;
+      current.final_row = getFinalRow();
+      if (current.y == current.final_row) currTime = 0;
+    }
 
     lastMoveWasRotate = false;
   }
@@ -180,52 +203,74 @@ class TetrisGame {
     lastMoveWasRotate = false;
   }
 
+  // Rotates block clockwise, moving it by up to two grid units in either grid X direction
+  // if that permits the rotation to be legal where an in-place rotation would not
   public void rotate() {
     if (current == null) return;
-
-    Shape rotated = current.shape.rotated();
-    int currentX = current.x;
-    int currentY = current.y;
-    
-    if (isLegal(rotated, currentX, currentY)) {
-      current.shape = rotated;
-      current.final_row = getFinalRow();
-    } else if (isLegal(rotated, currentX + 1, currentY) || isLegal(rotated, currentX + 2, currentY)) {
-      current.shape = rotated;
-      right();
-    } else if (isLegal(rotated, currentX - 1, currentY) || isLegal(rotated, currentX - 2, currentY)) {
-      current.shape = rotated;
-      left();
-    }
-    
-    audio.playRotate();
-
-    lastMoveWasRotate = true;
+    applyRotation(current.shape.rotated());
   }
   
+  // Rotates block counterclockwise, moving it by up to two grid units in either grid X direction
+  // if that permits the rotation to be legal where an in-place rotation would not
   public void counterRotate() {
     if (current == null) return;
+    applyRotation(current.shape.counterRotated());
+  }
 
-    Shape rotated = current.shape.counterRotated();
+  private void applyRotation(Shape rotated) {
     int currentX = current.x;
     int currentY = current.y;
-    
+    boolean wasRotated = true;
+    boolean wasFloorKicked = false;
+
     if (isLegal(rotated, currentX, currentY)) {
+      // Nothing to do
+    } else if (isLegal(rotated, currentX + 1, currentY)) {
+      current.x++;
+    } else if (isLegal(rotated, currentX - 1, currentY)) {
+      current.x--;
+    } else if (isLegal(rotated, currentX + 2, currentY)) {
+      current.x += 2;
+    } else if (isLegal(rotated, currentX - 2, currentY)) {
+      current.x -= 2;
+      // Floor kick
+    } else if (isLegal(rotated, currentX, currentY - 1)) {
+      current.y -= 1;
+      wasFloorKicked = true;
+    } else if (isLegal(rotated, currentX, currentY - 2)) {
+      current.y -= 2;
+      wasFloorKicked = true;
+    } else if (isLegal(rotated, currentX, currentY - 3)) {
+      current.y -= 3;
+      wasFloorKicked = true;
+      // No rotation possible
+    } else {
+      wasRotated = false;
+    }
+    
+    if (wasRotated) {
       current.shape = rotated;
       current.final_row = getFinalRow();
-    } else if (isLegal(rotated, currentX + 1, currentY) || isLegal(rotated, currentX + 2, currentY)) {
-      current.shape = rotated;
-      right();
-    } else if (isLegal(rotated, currentX - 1, currentY) || isLegal(rotated, currentX - 2, currentY)) {
-      current.shape = rotated;
-      left();
-    }
-     
-     audio.playRotate();
+      audio.playRotate();
+      lastMoveWasRotate = true;
 
-    lastMoveWasRotate = true;
+      // Reset lock delay after rotation
+      if (current.y == current.final_row) 
+      {
+        // But after floor kick is used, we stop resetting the
+        // lock delay, to prevent the piece from being kicked up
+        // ad infinitum
+        if (!usedFloorKick)
+          currTime = 0;
+
+        usedFloorKick = usedFloorKick || wasFloorKicked;
+      }
+    }
   }
   
+  // Allows the player (upon pressing SELECT) to swap the current 
+  // tetromino with the next piece from the queue. Can be used
+  // once per "turn" i.e. until the next piece is dequeued naturally.
   public void swapHeldPiece() {
     if (heldUsed || current == null) return;
     
@@ -237,6 +282,13 @@ class TetrisGame {
     heldUsed = true;
   }
   
+  // Copies the current shape into the grid (making it part of the
+  // level's collision)
+  // Locks the current piece in position, tests whether the player
+  // completed a line. 
+  // Loads the next piece.
+  //
+  // This expects that the current tetromino is at its final row.
   private void finalizeShapePlacement() {
     for (int i = 0; i < current.shape.matrix.length; ++i)
       for (int j = 0; j < current.shape.matrix.length; ++j)
@@ -244,7 +296,6 @@ class TetrisGame {
           grid.colors[i + current.x][j + current.y] = current.shape.c;
     
     if (checkLines()) {
-      audio.playLine();
       // Start "rows cleared" animation, next piece will be loaded at end of animation 
       animateCount = ANIMATION_LENGTH;
       current = null;
@@ -257,16 +308,23 @@ class TetrisGame {
   }
 
   private boolean checkLines() {
+
+    // Test for a complete line
     grid.updatedClearedRows();
     if (grid.clearedRows.isEmpty()) {
       lastScoreWasSpecial = false;
       return false;
     }
 
+    // Increase game difficulty if enough lines cleared
     if (lines/10 < (lines + grid.clearedRows.size())/10) {
       level++;
       timer -= SPEED_DECREASE;
     }
+
+    if (grid.clearedRows.size() == 4) audio.playTetris();
+    else audio.playLine();
+
     lines += grid.clearedRows.size();
 
     // Update scoring
@@ -307,6 +365,9 @@ class TetrisGame {
     return cornersFilled >= 3;
   }
 
+  // Fills nextShapes with an equitably distributed random selection of shapes.
+  // Calls insertShape, which pops the first shape from this queue and initializes 
+  // the current tetromino based on this shape.
   private void loadNext() {
     while (nextShapes.size() < shapes.length) {
       ArrayList<Shape> newShapes = new ArrayList<Shape>();
@@ -321,16 +382,21 @@ class TetrisGame {
     insertShape(nextShapes.remove(0));
   }
 
+  // Initializes the current tetromino, assigns its final row
   private void insertShape(Shape shape) {
     current = new Tetromino(shape);
     current.final_row = getFinalRow();
     gameOver = !isLegal(current.shape, 3, -1);
-    
+    usedFloorKick = false;
+
     if(gameOver) {
       audio.stopMusic();
     }
   }
 
+  // Based on the current position of the tetromino along the
+  // x-axis, finds the bottom-most row for it, i.e. the row
+  // that it would land on if it were hard-dropped
   private int getFinalRow() {
     int start = Math.max(0, current.y);
     for (int row = start; row <= grid.rows; ++row)
@@ -339,6 +405,9 @@ class TetrisGame {
     return -1;
   }
 
+  // Performs a collision test from a shape against the blocks 
+  // already in the grid. Returns true if there is no collision,
+  // false if there is.
   private boolean isLegal(Shape shape, int col, int row) {
     for (int i = 0; i < shape.matrix.length; ++i)
       for (int j = 0; j < shape.matrix.length; ++j)

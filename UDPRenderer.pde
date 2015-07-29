@@ -17,18 +17,16 @@ class UDPRenderer {
   }
   
   void renderGameState(TetrisGame currentGame) {
-    Grid grid = currentGame.getGrid();
-    Packet packet = new Packet(this.config.protocolVersion, grid.cols, grid.rows);
+    Packet packet = new Packet(this.config.protocolVersion, TETRIS_WIDTH, TETRIS_HEIGHT);
     
-    if (currentGame.isGameOver()) {
+    if (currentGame == null || currentGame.isGameOver()) {
       packet.emptyGrid();
-    }
-    else {
+    } else {
       Tetromino current = currentGame.getCurrent();
       
-      boolean[][] flattenGrid = new boolean[grid.cols][grid.rows];   
+      boolean[][] flattenGrid = new boolean[TETRIS_WIDTH][TETRIS_HEIGHT];
       
-      setGridData(flattenGrid, grid);
+      setGridData(flattenGrid, currentGame.getGrid());
       
       if(current != null) 
         setShapeData(flattenGrid, current.shape, current.x, current.y);

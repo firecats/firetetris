@@ -1,4 +1,5 @@
 class GameInput {
+  public boolean newGameActive;
   public boolean rotateActive;
   public boolean counterRotateActive;
   public boolean downActive;
@@ -18,58 +19,25 @@ class CompositeGameInput extends GameInput {
   }
   
   public void update() {
+    newGameActive = false;
+    rotateActive = false;
+    counterRotateActive = false;
+    downActive = false;
+    leftActive = false;
+    rightActive = false;
+    hardDownActive = false;
+    swapHeldActive = false;
+
     for (GameInput input : gameInputs) {
       input.update();
-    }
-
-    rotateActive = false;
-    for (GameInput input : gameInputs) {
-      if (input.rotateActive) {
-        rotateActive = true;
-        break;
-      }
-    }
-    counterRotateActive = false;
-    for (GameInput input : gameInputs) {
-      if (input.counterRotateActive) {
-        counterRotateActive = true;
-        break;
-      }
-    }
-    downActive = false;
-    for (GameInput input : gameInputs) {
-      if (input.downActive) {
-        downActive = true;
-        break;
-      }
-    }
-    leftActive = false;
-    for (GameInput input : gameInputs) {
-      if (input.leftActive) {
-        leftActive = true;
-        break;
-      }
-    }
-    rightActive = false;
-    for (GameInput input : gameInputs) {
-      if (input.rightActive) {
-        rightActive = true;
-        break;
-      }
-    }
-    hardDownActive = false;
-    for (GameInput input : gameInputs) {
-      if (input.hardDownActive) {
-        hardDownActive = true;
-        break;
-      }
-    }
-    swapHeldActive = false;
-    for (GameInput input : gameInputs) {
-      if (input.swapHeldActive) {
-        swapHeldActive = true;
-        break;
-      }
+      if (input.newGameActive) newGameActive = true;
+      if (input.rotateActive) rotateActive = true;
+      if (input.counterRotateActive) counterRotateActive = true;
+      if (input.downActive) downActive = true;
+      if (input.leftActive) leftActive = true;
+      if (input.rightActive) rightActive = true;
+      if (input.hardDownActive) hardDownActive = true;
+      if (input.swapHeldActive) swapHeldActive = true;
     }
   }
 }

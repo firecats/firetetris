@@ -8,5 +8,8 @@ static class Config {
 
   //static String gamepadConfiguration = "nes_controller_mac";
   static String gamepadConfiguration = "";
+
+  //static String arduinoInputConfiguration = "/dev/cu.usbmodem1411";
+  static String arduinoInputConfiguration = "";
 }
 

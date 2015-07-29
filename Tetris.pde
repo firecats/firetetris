@@ -11,6 +11,9 @@
  
 import ddf.minim.*;
 
+final static int TETRIS_WIDTH = 10;
+final static int TETRIS_HEIGHT = 20;
+
 Config config;
 AppletRenderer renderer;
 UDPRenderer udpRenderer;
@@ -28,15 +31,11 @@ public void setup() {
   udpRenderer = new UDPRenderer(config);
   
   minim = new Minim(this);
-  
-  newGame();
-  color a = color(1,1,1);
-
 }
 
 public void draw() {
   inputController.update(currentGame);
-  currentGame.update();
+  if (currentGame != null) currentGame.update();
   renderer.renderGameState(currentGame);
   udpRenderer.renderGameState(currentGame);
 }
@@ -48,6 +47,9 @@ public void keyPressed() {
     // Ignore escape being pressed. This prevents the default quit behavior.
     key = 0;
   } else if (char(keyCode) == 'Q' && ctrlPressed) {
+    // Flush displays and exit
+    renderer.renderGameState(null);
+    udpRenderer.renderGameState(null);
     exit();
   } else if (keyCode == CONTROL) {
     ctrlPressed = true;
