@@ -13,6 +13,13 @@ class Packet {
     packet += width + "\n";
     packet += height + "\n";
   }
+
+  void addPoofer(boolean active) {
+    for (int i = 0; i < this.width; ++i) {
+      packet += active ? "1" : "0";
+    }
+    packet += "\n";
+  }
   
   void addGridData(boolean[][] gridData) {
     for (int i = 0; i < this.height; ++i) {

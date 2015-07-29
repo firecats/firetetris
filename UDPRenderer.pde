@@ -4,8 +4,8 @@ class UDPRenderer {
   
   private UDP udp;
   private Config config;
-  
   private Grid grid;
+  private int pooferStartTime = 0;
   
   UDPRenderer(Config config) {
     this.config = config;
@@ -16,10 +16,16 @@ class UDPRenderer {
   
   void renderGameState(TetrisGame currentGame) {
     Packet packet = new Packet(this.config.protocolVersion, TETRIS_WIDTH, TETRIS_HEIGHT);
-    
+
     if (currentGame == null || currentGame.isGameOver()) {
+      packet.addPoofer(false);
       packet.emptyGrid();
     } else {
+      int currentMillis = millis();
+      if (currentGame.getJustScoredSpecial())
+        pooferStartTime = currentMillis;
+      packet.addPoofer(pooferStartTime > 0 && (currentMillis < pooferStartTime + config.pooferDurationMs));
+
       Tetromino current = currentGame.getCurrent();
       
       boolean[][] flattenGrid = new boolean[TETRIS_WIDTH][TETRIS_HEIGHT];
