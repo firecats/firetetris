@@ -70,14 +70,12 @@ class AppletRenderer implements ControlListener {
     text("HELD", 10, 28);
     text("NEXT", 460, 28);
 
-    text("LEVEL", 460, 221);
-    text(currentGame.getLevel(), 460, 244);
-
-    text("LINES", 460, 272);
-    text(currentGame.getLines(), 460, 295);
-
-    text("SCORE", 460, 323);
-    text(currentGame.getScore(), 460, 346);
+    int y = 221;
+    for (ScoreValue scoreValue : currentGame.getScoreValues()) {
+      text(scoreValue.displayName, 460, y);
+      text(scoreValue.value, 460, y + 23);
+      y += 51;
+    }
   }
 
   @Override
