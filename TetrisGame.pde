@@ -1,13 +1,3 @@
-class ScoreValue {
-  public String displayName;
-  public int value;
-
-  ScoreValue(String displayName, int value) {
-    this.displayName = displayName;
-    this.value = value;
-  }
-}
-
 class TetrisGame {
   
   public final static int ANIMATION_LENGTH = 25;
@@ -33,9 +23,9 @@ class TetrisGame {
   private boolean lastScoreWasSpecial;
   private boolean lastMoveWasRotate;
   private boolean usedFloorKick;
-  private ScoreValue score = new ScoreValue("SCORE", 0);
-  private ScoreValue lines = new ScoreValue("LINES", 0);
-  private ScoreValue level = new ScoreValue("LEVEL", 1);
+  private IntScoreValue score = new IntScoreValue("SCORE", 0);
+  private IntScoreValue lines = new IntScoreValue("LINES", 0);
+  private IntScoreValue level = new IntScoreValue("LEVEL", 1);
   
   // True if game is over, false otherwise.
   private boolean gameOver;

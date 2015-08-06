@@ -17,7 +17,7 @@ class GameMod {
 class TimedMode extends GameMod {
   private int startTime;
   private int gameDuration;
-  private ScoreValue timer = new ScoreValue("TIME", 0);
+  private TimeScoreValue timer = new TimeScoreValue("TIME", 0);
 
   TimedMode(int gameDuration) {
     this.gameDuration = gameDuration;
@@ -30,8 +30,8 @@ class TimedMode extends GameMod {
   }
 
   public void update() {
-    timer.value = (gameDuration - (millis() - startTime)) / 1000;
-    if (timer.value < 0) timer.value = 0;
-    if (game != null && timer.value == 0) game.endGame();
+    timer.seconds = (gameDuration - (millis() - startTime)) / 1000;
+    if (timer.seconds < 0) timer.seconds = 0;
+    if (game != null && timer.seconds == 0) game.endGame();
   }
 }

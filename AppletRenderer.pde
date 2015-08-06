@@ -73,7 +73,7 @@ class AppletRenderer implements ControlListener {
     int y = 221;
     for (ScoreValue scoreValue : currentGame.getScoreValues()) {
       text(scoreValue.displayName, 460, y);
-      text(scoreValue.value, 460, y + 23);
+      text(scoreValue.toString(), 460, y + 23);
       y += 51;
     }
   }
