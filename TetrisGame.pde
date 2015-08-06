@@ -19,6 +19,7 @@ class TetrisGame {
 
   // Scoring properties
   private boolean lastScoreWasSpecial;
+  private boolean justScoredSpecial;
   private boolean lastMoveWasRotate;
   private boolean usedFloorKick;
   private int score;
@@ -53,6 +54,7 @@ class TetrisGame {
 
     level = 1;
     lastScoreWasSpecial = false;
+    justScoredSpecial = false;
     lastMoveWasRotate = false;
     usedFloorKick = false;
   }
@@ -75,6 +77,10 @@ class TetrisGame {
 
   public Grid getGrid() {
     return grid;
+  }
+
+  public boolean getJustScoredSpecial() {
+    return justScoredSpecial;
   }
 
   public int getScore() {
@@ -116,7 +122,7 @@ class TetrisGame {
     if(gameOver) {
       return;
     }
-    
+
     // Pause for "row clearing" animation before the next piece is loaded
     if (animateCount >= 0) {
       animateCount--;
@@ -139,6 +145,11 @@ class TetrisGame {
       if (current != null && current.y == current.final_row)
         currTime = -timer;
     }
+  }
+
+  // Cleanup that needs to happen at the end of a frame
+  public void cleanup() {
+    justScoredSpecial = false;
   }
   
   // Callback for the player pressing "down"
@@ -337,12 +348,12 @@ class TetrisGame {
       case 4: scoreMultiplier = 8; break; // TSpin can fill 3 rows maximum
     }
 
-    boolean specialAchieved = (tspinAchieved || grid.clearedRows.size() == 4);
-    if (specialAchieved && lastScoreWasSpecial) scoreMultiplier *= 1.5;
+    justScoredSpecial = (tspinAchieved || grid.clearedRows.size() == 4);
+    if (justScoredSpecial && lastScoreWasSpecial) scoreMultiplier *= 1.5;
 
     score += 100 * scoreMultiplier * level;
 
-    lastScoreWasSpecial = specialAchieved;
+    lastScoreWasSpecial = justScoredSpecial;
 
     return true;
   }

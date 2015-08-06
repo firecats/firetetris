@@ -38,6 +38,7 @@ public void draw() {
   if (currentGame != null) currentGame.update();
   renderer.renderGameState(currentGame);
   udpRenderer.renderGameState(currentGame);
+  if (currentGame != null) currentGame.cleanup();
 }
 
 boolean ctrlPressed = false;
