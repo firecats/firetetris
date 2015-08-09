@@ -6,10 +6,8 @@ class GameMod {
     this.game = game;
   }
 
-  public void update() {
-
-  }
-
+  public void update() {}
+  public void setPaused(boolean paused) {}
 }
 
 // TimedMode will automatically end the game after a predetermined set of time. This time is specified
@@ -33,5 +31,15 @@ class TimedMode extends GameMod {
     timer.seconds = (gameDuration - (millis() - startTime)) / 1000;
     if (timer.seconds < 0) timer.seconds = 0;
     if (game != null && timer.seconds == 0) game.endGame();
+  }
+
+  public void setPaused(boolean paused) {
+    if (paused) {
+      // Save how much time is really left right now
+      this.gameDuration = (gameDuration - (millis() - startTime));
+    } else {
+      // Reset the start point
+      this.startTime = millis();
+    }
   }
 }

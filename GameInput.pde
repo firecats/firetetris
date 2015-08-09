@@ -1,5 +1,5 @@
 class GameInput {
-  public boolean newGameActive;
+  public boolean startActive;
   public boolean rotateActive;
   public boolean counterRotateActive;
   public boolean downActive;
@@ -19,7 +19,7 @@ class CompositeGameInput extends GameInput {
   }
   
   public void update() {
-    newGameActive = false;
+    startActive = false;
     rotateActive = false;
     counterRotateActive = false;
     downActive = false;
@@ -30,7 +30,7 @@ class CompositeGameInput extends GameInput {
 
     for (GameInput input : gameInputs) {
       input.update();
-      if (input.newGameActive) newGameActive = true;
+      if (input.startActive) startActive = true;
       if (input.rotateActive) rotateActive = true;
       if (input.counterRotateActive) counterRotateActive = true;
       if (input.downActive) downActive = true;

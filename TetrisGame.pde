@@ -1,4 +1,4 @@
-class TetrisGame {
+class TetrisGame extends InputHandler {
   
   public final static int ANIMATION_LENGTH = 25;
   private final static int SPEED_DECREASE = 2;
@@ -29,6 +29,7 @@ class TetrisGame {
   
   // True if game is over, false otherwise.
   private boolean gameOver;
+  private boolean paused;
   
   // Countdown for animation. Animation lasts for 20 frames.
   private int animateCount;
@@ -61,6 +62,9 @@ class TetrisGame {
     scoreValues.add(level);
     scoreValues.add(lines);
     scoreValues.add(score);
+
+    gameOver = false;
+    paused = false;
   }
 
   public Tetromino getCurrent() {
@@ -99,6 +103,18 @@ class TetrisGame {
     return gameOver;
   }
 
+  public boolean isPaused() {
+    return paused;
+  }
+
+  public void setPaused(boolean paused) {
+    this.paused = paused;
+
+    for (GameMod mod : mods) {
+      mod.setPaused(paused);
+    }
+  }
+
   // This is used as a timer for the "row clearing" animation. While rows are being cleared,
   // the game is temporarily suspended and the next tetromino's loading is paused
   public int getAnimateCount() {
@@ -116,6 +132,10 @@ class TetrisGame {
 
   public void addScoreValue(ScoreValue scoreValue) {
     scoreValues.add(scoreValue);
+  }
+
+  public void start() {
+    setPaused(true);
   }
 
   // used when automatically moving the block down.
@@ -294,7 +314,7 @@ class TetrisGame {
   // Allows the player (upon pressing SELECT) to swap the current 
   // tetromino with the next piece from the queue. Can be used
   // once per "turn" i.e. until the next piece is dequeued naturally.
-  public void swapHeldPiece() {
+  public void swapHeld() {
     if (heldUsed || current == null) return;
     
     int currentShapeId = current.shape.shapeId;

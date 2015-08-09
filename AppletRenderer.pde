@@ -1,6 +1,6 @@
 import controlP5.*;
 
-class AppletRenderer implements ControlListener {
+class AppletRenderer {
 
   private final GridView boardView;
   private final GridView previewView;
@@ -19,29 +19,8 @@ class AppletRenderer implements ControlListener {
   }
 
   void renderGameState(TetrisGame currentGame) {
-    background(0);
+    if (currentGame == null) return;
 
-    if (currentGame == null || currentGame.isGameOver()) {
-      pushStyle();
-
-      textAlign(CENTER, BOTTOM);
-      textSize(18);
-      text("(press enter to begin)", width/2, height/2);
-
-      textSize(25);
-      if (currentGame == null) {
-        text("READY TO PLAY", width/2, height/2 - 35);
-      } else if (currentGame.isGameOver()) {
-        text("GAME OVER", width/2, height/2 - 85);
-        textSize(20);
-        text("SCORE: " + currentGame.getScore(), width/2, height/2 - 60);
-        text("LINES: " + currentGame.getLines(), width/2, height/2 - 35);
-      }
-
-      popStyle();
-      return;
-    }
-    
     boardView.rows = currentGame.getGrid().rows;
     boardView.cols = currentGame.getGrid().cols;
     boardView.drawOutline();
@@ -78,10 +57,28 @@ class AppletRenderer implements ControlListener {
     }
   }
 
-  @Override
-  public void controlEvent(ControlEvent event) {
-    if (event.name() == "play") {
-      newGame();
+  public void renderMenu(TetrisGame game) {
+    pushStyle();
+
+    textAlign(CENTER, BOTTOM);
+    textSize(18);
+    String promptMessage = "";
+    if (currentGame == null) promptMessage = "start";
+    else if (currentGame.isPaused()) promptMessage = "continue";
+    else if (currentGame.isGameOver()) promptMessage = "start a new game";
+
+    text("(press enter to " + promptMessage + ")", width/2, height/2);
+
+    textSize(25);
+    if (currentGame == null) {
+      text("READY TO PLAY", width/2, height/2 - 35);
+    } else if (currentGame.isGameOver()) {
+      text("GAME OVER", width/2, height/2 - 85);
+      textSize(20);
+      text("SCORE: " + currentGame.getScore(), width/2, height/2 - 60);
+      text("LINES: " + currentGame.getLines(), width/2, height/2 - 35);
     }
+
+    popStyle();
   }
 }
