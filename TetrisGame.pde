@@ -1,7 +1,7 @@
 class TetrisGame {
   
   public final static int ANIMATION_LENGTH = 25;
-  private final static int SPEED_DECREASE = 2;
+  private final int[] FRAMES_PER_ROW = { 53,49,45,41,37,33,28,22,17,11,10,9,8,7,6,6,5,5,4,4,3 };
 
   // Game properties
   private Tetromino current;
@@ -13,7 +13,7 @@ class TetrisGame {
   private Shape[] shapes = new Shape[7];
 
   // timer is the interval between game "steps". Every 'timer' loops, the current block is moved down.
-  private int timer = 20;
+  private int timer;
   // Represents the progress in 'timer'. Increased during every loop and reset when a block is stepped down.
   private int currTime = 0;
 
@@ -46,6 +46,7 @@ class TetrisGame {
 
     loadNext();
 
+    timer = FRAMES_PER_ROW[0];
     currTime = 0;
     animateCount = -1;
     
@@ -328,9 +329,11 @@ class TetrisGame {
     }
 
     // Increase game difficulty if enough lines cleared
+    println("lines/10: "+ (lines/10));
+    println("grid.clearedRows.size(): "+grid.clearedRows.size());
     if (lines/10 < (lines + grid.clearedRows.size())/10) {
       level++;
-      timer -= SPEED_DECREASE;
+      timer = FRAMES_PER_ROW[min(level, FRAMES_PER_ROW.length) - 1];
     }
 
     if (grid.clearedRows.size() == 4) audio.playTetris();
