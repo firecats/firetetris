@@ -11,6 +11,7 @@ class GamepadGameInput extends GameInput {
     startActive = false;
     rotateActive = false;
     counterRotateActive = false;
+    upActive = false;
     downActive = false;
     leftActive = false;
     rightActive = false;
@@ -27,7 +28,7 @@ class GamepadGameInput extends GameInput {
     downActive = gpad.getSlider("YPOS").getValue() > 0.5;
     leftActive = gpad.getSlider("XPOS").getValue() < -0.5;
     rightActive = gpad.getSlider("XPOS").getValue() > 0.5;
-    hardDownActive = gpad.getSlider("YPOS").getValue() < -0.5;
+    upActive = hardDownActive = gpad.getSlider("YPOS").getValue() < -0.5;
     swapHeldActive = gpad.getButton("SELECT").pressed();
   }
 }

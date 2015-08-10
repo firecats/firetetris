@@ -57,7 +57,7 @@ class AppletRenderer {
     }
   }
 
-  public void renderMenu(TetrisGame game) {
+  public void renderMenu(TetrisGame game, TetrisMenu menu) {
     pushStyle();
 
     textAlign(CENTER, BOTTOM);
@@ -77,6 +77,20 @@ class AppletRenderer {
       textSize(20);
       text("SCORE: " + currentGame.getScore(), width/2, height/2 - 60);
       text("LINES: " + currentGame.getLines(), width/2, height/2 - 35);
+    }
+
+    if (currentGame == null || currentGame.isGameOver()) {
+      textSize(18);
+      text(menu.getCurrentOptionDisplayName(), width/2, 3*height/4);
+      textSize(16);
+      text(menu.getCurrentOptionValue(), width/2, 3*height/4 + 40);
+
+      if (menu.canIncreaseCurrentOption()) {
+          triangle(width/2, 3*height/4 + 10, width/2 - 5, 3*height/4 + 15, width/2 + 5, 3*height/4 + 15);
+      }
+      if (menu.canDecreaseCurrentOption()) {
+          triangle(width/2, 3*height/4 + 51, width/2 - 5, 3*height/4 + 46, width/2 + 5, 3*height/4 + 46);
+      }
     }
 
     popStyle();

@@ -57,7 +57,7 @@ public void draw() {
     fill(0, 0, 0, 230);
     rect(0, 0, width, height);
     popStyle();
-    renderer.renderMenu(currentGame);
+    renderer.renderMenu(currentGame, menu);
   }
 }
 

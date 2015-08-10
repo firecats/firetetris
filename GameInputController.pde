@@ -2,6 +2,7 @@ class InputHandler {
   public void start() {}
   public void rotate() {}
   public void counterRotate() {}
+  public void up() {}
   public void down() {}
   public void left() {}
   public void right() {}
@@ -20,6 +21,7 @@ class GameInputController {
   CommandManager startCommandManager;
   CommandManager rotateCommandManager;
   CommandManager counterRotateCommandManager;
+  CommandManager upCommandManager;
   CommandManager downCommandManager;
   CommandManager leftCommandManager;
   CommandManager rightCommandManager;
@@ -46,6 +48,7 @@ class GameInputController {
       aggregateInput.gameInputs.add(arduinoGameInput);
     }
 
+    upCommandManager = new CommandDelayManager();
     downCommandManager = new CommandDelayManager();
     leftCommandManager = new CommandDelayManager();
     rightCommandManager = new CommandDelayManager();
@@ -58,6 +61,7 @@ class GameInputController {
     if (startCommandManager.isTriggered(aggregateInput.startActive)) receiver.start();
     if (rotateCommandManager.isTriggered(aggregateInput.rotateActive)) receiver.rotate();
     if (counterRotateCommandManager.isTriggered(aggregateInput.counterRotateActive)) receiver.counterRotate();
+    if (upCommandManager.isTriggered(aggregateInput.upActive)) receiver.up();
     if (downCommandManager.isTriggered(aggregateInput.downActive)) receiver.down();
     if (leftCommandManager.isTriggered(aggregateInput.leftActive)) receiver.left();
     if (rightCommandManager.isTriggered(aggregateInput.rightActive)) receiver.right();

@@ -2,6 +2,7 @@ class GameInput {
   public boolean startActive;
   public boolean rotateActive;
   public boolean counterRotateActive;
+  public boolean upActive;
   public boolean downActive;
   public boolean leftActive;
   public boolean rightActive;
@@ -22,6 +23,7 @@ class CompositeGameInput extends GameInput {
     startActive = false;
     rotateActive = false;
     counterRotateActive = false;
+    upActive = false;
     downActive = false;
     leftActive = false;
     rightActive = false;
@@ -33,6 +35,7 @@ class CompositeGameInput extends GameInput {
       if (input.startActive) startActive = true;
       if (input.rotateActive) rotateActive = true;
       if (input.counterRotateActive) counterRotateActive = true;
+      if (input.upActive) upActive = true;
       if (input.downActive) downActive = true;
       if (input.leftActive) leftActive = true;
       if (input.rightActive) rightActive = true;
