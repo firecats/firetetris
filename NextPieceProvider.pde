@@ -100,3 +100,56 @@ class CompositeNextPieceProvider extends NextPieceProvider {
     return null;
   }
 }
+
+class ToughestNextPieceProvider extends NextPieceProvider {
+  private TetrisGame game;
+
+  ToughestNextPieceProvider(TetrisGame game) {
+    this.game = game;
+  }
+
+  public boolean canProvideInfiniteBlocks() { return true; }
+  public ArrayList<Shape> getNextShapes() { return new ArrayList<Shape>(); }
+  
+  public Shape takeNextShape() {
+    Shape worstShape = null;
+    int worstScore = 0; // High score value is bad, find the highest
+
+    for (int i = 0; i < TETRIS_SHAPES.length; ++i) {
+      Shape s = TETRIS_SHAPES[i];
+      int bestScore = -1;
+
+      for (int orientation = 0; orientation < 4; ++orientation) {
+        for (int col = 0; col < game.grid.cols; ++col) {
+
+          s = s.rotated();
+
+          // Create a new grid, insert the shape and score it
+          Grid tested = new Grid(game.grid);
+          int row = 0;
+          for (; row < tested.rows; ++row) {
+            if (!tested.isLegal(s, col, row)) {
+              --row;
+              break;
+            }
+          }
+
+          if (tested.placeShape(s, col, row)) {
+            // Score only counts if the dropped location was valid
+            int score = tested.scoreGrid();
+            if (bestScore == -1 || score < bestScore) {
+              bestScore = score;
+            }
+          }
+        }
+      }
+
+      if (bestScore > worstScore) {
+        worstScore = bestScore;
+        worstShape = s;
+      }
+    }
+
+    return worstShape;
+  }
+}
