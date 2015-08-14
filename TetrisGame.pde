@@ -381,8 +381,7 @@ class TetrisGame extends InputHandler {
     // Increase game difficulty if enough lines cleared
     if (lines.value/10 < (lines.value + grid.clearedRows.size())/10) {
       level.value++;
-      timer -= SPEED_DECREASE;
-      timer = FRAMES_PER_ROW[min(level, FRAMES_PER_ROW.length) - 1];
+      timer = FRAMES_PER_ROW[min(level.value, FRAMES_PER_ROW.length) - 1];
     }
 
     if (grid.clearedRows.size() == 4) audio.playTetris();
