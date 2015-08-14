@@ -37,16 +37,16 @@ class AppletRenderer {
       previewView.drawShape(next, 1, 1 + i * 3 - next.getFirstNonEmptyRow());
     }
     
-    if (!currentGame.isHeldUsed()) {
-      heldPieceView.drawOutline();
-    }
+    heldPieceView.drawOutline();
     if (currentGame.getHeld() != null) {
-      heldPieceView.drawShape(currentGame.getHeld(), 0, -currentGame.getHeld().getFirstNonEmptyRow());
+      Shape heldShape = new Shape(currentGame.getHeld());
+      if (currentGame.isHeldUsed()) heldShape.c = color(255, 255, 255);
+      heldPieceView.drawShape(heldShape, 0, -heldShape.getFirstNonEmptyRow());
     }
     
     fill(255);
     
-    text("HELD", 10, 28);
+    text("HOLD", 10, 28);
     text("NEXT", 460, 28);
 
     int y = 221;
