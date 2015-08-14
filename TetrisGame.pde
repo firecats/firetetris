@@ -362,6 +362,11 @@ class TetrisGame extends InputHandler {
       animateCount = ANIMATION_LENGTH;
       current = null;
     } else {
+      if (isTSpin()) {
+        // bonus points for doing a T-Spin but not clearing lines
+        score.value += 200 * level.value;
+      }
+
       audio.playPlace();
       loadNext();
     }
@@ -393,9 +398,9 @@ class TetrisGame extends InputHandler {
     int scoreMultiplier = 1;
     boolean tspinAchieved = isTSpin();
     switch (grid.clearedRows.size()) {
-      case 1: scoreMultiplier = (tspinAchieved ? 4 : 1); break;
-      case 2: scoreMultiplier = (tspinAchieved ? 8 : 2); break;
-      case 3: scoreMultiplier = (tspinAchieved ? 12 : 5); break;
+      case 1: scoreMultiplier = (tspinAchieved ? 8 : 1); break;
+      case 2: scoreMultiplier = (tspinAchieved ? 12 : 2); break;
+      case 3: scoreMultiplier = (tspinAchieved ? 16 : 5); break;
       case 4: scoreMultiplier = 8; break; // TSpin can fill 3 rows maximum
     }
 
