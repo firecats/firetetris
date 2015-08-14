@@ -204,6 +204,7 @@ class TetrisGame extends InputHandler {
       // if already at the bottom, down shortcuts to lock current and load next block
       finalizeShapePlacement();
     } else {
+      score.value++;
       stepDown();
     }
 
@@ -252,6 +253,7 @@ class TetrisGame extends InputHandler {
   public void hardDown() {
     if (current == null) return;
 
+    score.value += (current.final_row - current.y) * 2;
     current.y = current.final_row;
     finalizeShapePlacement();
 
