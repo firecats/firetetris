@@ -1,4 +1,4 @@
-class TetrisGame {
+class TetrisGame extends InputHandler {
   
   public final static int ANIMATION_LENGTH = 25;
   private final int[] FRAMES_PER_ROW = { 53,49,45,41,37,33,28,22,17,11,10,9,8,7,6,6,5,5,4,4,3 };
@@ -11,6 +11,8 @@ class TetrisGame {
   private boolean heldUsed;
   private Grid grid;
   private Shape[] shapes = new Shape[7];
+  private ArrayList<ScoreValue> scoreValues;
+  private ArrayList<GameMod> mods = new ArrayList<GameMod>();
 
   // timer is the interval between game "steps". Every 'timer' loops, the current block is moved down.
   private int timer;
@@ -22,12 +24,13 @@ class TetrisGame {
   private boolean justScoredSpecial;
   private boolean lastMoveWasRotate;
   private boolean usedFloorKick;
-  private int score;
-  private int lines;
-  private int level;
+  private IntScoreValue score = new IntScoreValue("SCORE", 0);
+  private IntScoreValue lines = new IntScoreValue("LINES", 0);
+  private IntScoreValue level = new IntScoreValue("LEVEL", 1);
   
   // True if game is over, false otherwise.
   private boolean gameOver;
+  private boolean paused;
   
   // Countdown for animation. Animation lasts for 20 frames.
   private int animateCount;
@@ -53,11 +56,18 @@ class TetrisGame {
     audio = new Audio(minim);
     audio.playMusic();
 
-    level = 1;
     lastScoreWasSpecial = false;
     justScoredSpecial = false;
     lastMoveWasRotate = false;
     usedFloorKick = false;
+
+    scoreValues = new ArrayList<ScoreValue>();
+    scoreValues.add(level);
+    scoreValues.add(lines);
+    scoreValues.add(score);
+
+    gameOver = false;
+    paused = false;
   }
 
   public Tetromino getCurrent() {
@@ -85,25 +95,54 @@ class TetrisGame {
   }
 
   public int getScore() {
-    return score;
+    return score.value;
   }
 
   public int getLines() {
-    return lines;
+    return lines.value;
   }
 
   public int getLevel() {
-    return level;
+    return level.value;
   }
 
   public boolean isGameOver() {
     return gameOver;
   }
 
+  public boolean isPaused() {
+    return paused;
+  }
+
+  public void setPaused(boolean paused) {
+    this.paused = paused;
+
+    for (GameMod mod : mods) {
+      mod.setPaused(paused);
+    }
+  }
+
   // This is used as a timer for the "row clearing" animation. While rows are being cleared,
   // the game is temporarily suspended and the next tetromino's loading is paused
   public int getAnimateCount() {
     return animateCount;
+  }
+
+  public ArrayList<ScoreValue> getScoreValues() {
+    return scoreValues;
+  }
+
+  public void addMod(GameMod mod) {
+    mod.initialize(this);
+    mods.add(mod);
+  }
+
+  public void addScoreValue(ScoreValue scoreValue) {
+    scoreValues.add(scoreValue);
+  }
+
+  public void start() {
+    setPaused(true);
   }
 
   // used when automatically moving the block down.
@@ -145,6 +184,10 @@ class TetrisGame {
       // effectively doubling time for extra wiggle room before it locks
       if (current != null && current.y == current.final_row)
         currTime = -timer;
+    }
+
+    for (GameMod mod : mods) {
+      mod.update();
     }
   }
 
@@ -283,7 +326,7 @@ class TetrisGame {
   // Allows the player (upon pressing SELECT) to swap the current 
   // tetromino with the next piece from the queue. Can be used
   // once per "turn" i.e. until the next piece is dequeued naturally.
-  public void swapHeldPiece() {
+  public void swapHeld() {
     if (heldUsed || current == null) return;
     
     int currentShapeId = current.shape.shapeId;
@@ -292,6 +335,13 @@ class TetrisGame {
     held = shapes[currentShapeId];
     
     heldUsed = true;
+  }
+
+  public void endGame() {
+    gameOver = true;
+    if(gameOver) {
+      audio.stopMusic();
+    }
   }
   
   // Copies the current shape into the grid (making it part of the
@@ -329,17 +379,16 @@ class TetrisGame {
     }
 
     // Increase game difficulty if enough lines cleared
-    println("lines/10: "+ (lines/10));
-    println("grid.clearedRows.size(): "+grid.clearedRows.size());
-    if (lines/10 < (lines + grid.clearedRows.size())/10) {
-      level++;
+    if (lines.value/10 < (lines.value + grid.clearedRows.size())/10) {
+      level.value++;
+      timer -= SPEED_DECREASE;
       timer = FRAMES_PER_ROW[min(level, FRAMES_PER_ROW.length) - 1];
     }
 
     if (grid.clearedRows.size() == 4) audio.playTetris();
     else audio.playLine();
 
-    lines += grid.clearedRows.size();
+    lines.value += grid.clearedRows.size();
 
     // Update scoring
     int scoreMultiplier = 1;
@@ -354,7 +403,7 @@ class TetrisGame {
     justScoredSpecial = (tspinAchieved || grid.clearedRows.size() == 4);
     if (justScoredSpecial && lastScoreWasSpecial) scoreMultiplier *= 1.5;
 
-    score += 100 * scoreMultiplier * level;
+    score.value += 100 * scoreMultiplier * level.value;
 
     lastScoreWasSpecial = justScoredSpecial;
 
@@ -400,12 +449,8 @@ class TetrisGame {
   private void insertShape(Shape shape) {
     current = new Tetromino(shape);
     current.final_row = getFinalRow();
-    gameOver = !isLegal(current.shape, 3, -1);
     usedFloorKick = false;
-
-    if(gameOver) {
-      audio.stopMusic();
-    }
+    if (!isLegal(current.shape, 3, -1)) endGame();
   }
 
   // Based on the current position of the tetromino along the

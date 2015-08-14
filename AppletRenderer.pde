@@ -1,6 +1,6 @@
 import controlP5.*;
 
-class AppletRenderer implements ControlListener {
+class AppletRenderer {
 
   private final GridView boardView;
   private final GridView previewView;
@@ -19,29 +19,8 @@ class AppletRenderer implements ControlListener {
   }
 
   void renderGameState(TetrisGame currentGame) {
-    background(0);
+    if (currentGame == null) return;
 
-    if (currentGame == null || currentGame.isGameOver()) {
-      pushStyle();
-
-      textAlign(CENTER, BOTTOM);
-      textSize(18);
-      text("(press enter to begin)", width/2, height/2);
-
-      textSize(25);
-      if (currentGame == null) {
-        text("READY TO PLAY", width/2, height/2 - 35);
-      } else if (currentGame.isGameOver()) {
-        text("GAME OVER", width/2, height/2 - 85);
-        textSize(20);
-        text("SCORE: " + currentGame.getScore(), width/2, height/2 - 60);
-        text("LINES: " + currentGame.getLines(), width/2, height/2 - 35);
-      }
-
-      popStyle();
-      return;
-    }
-    
     boardView.rows = currentGame.getGrid().rows;
     boardView.cols = currentGame.getGrid().cols;
     boardView.drawOutline();
@@ -70,20 +49,50 @@ class AppletRenderer implements ControlListener {
     text("HELD", 10, 28);
     text("NEXT", 460, 28);
 
-    text("LEVEL", 460, 221);
-    text(currentGame.getLevel(), 460, 244);
-
-    text("LINES", 460, 272);
-    text(currentGame.getLines(), 460, 295);
-
-    text("SCORE", 460, 323);
-    text(currentGame.getScore(), 460, 346);
+    int y = 221;
+    for (ScoreValue scoreValue : currentGame.getScoreValues()) {
+      text(scoreValue.displayName, 460, y);
+      text(scoreValue.toString(), 460, y + 23);
+      y += 51;
+    }
   }
 
-  @Override
-  public void controlEvent(ControlEvent event) {
-    if (event.name() == "play") {
-      newGame();
+  public void renderMenu(TetrisGame game, TetrisMenu menu) {
+    pushStyle();
+
+    textAlign(CENTER, BOTTOM);
+    textSize(18);
+    String promptMessage = "";
+    if (currentGame == null) promptMessage = "start";
+    else if (currentGame.isPaused()) promptMessage = "continue";
+    else if (currentGame.isGameOver()) promptMessage = "start a new game";
+
+    text("(press enter to " + promptMessage + ")", width/2, height/2);
+
+    textSize(25);
+    if (currentGame == null) {
+      text("READY TO PLAY", width/2, height/2 - 35);
+    } else if (currentGame.isGameOver()) {
+      text("GAME OVER", width/2, height/2 - 85);
+      textSize(20);
+      text("SCORE: " + currentGame.getScore(), width/2, height/2 - 60);
+      text("LINES: " + currentGame.getLines(), width/2, height/2 - 35);
     }
+
+    if (currentGame == null || currentGame.isGameOver()) {
+      textSize(18);
+      text(menu.getCurrentOptionDisplayName(), width/2, 3*height/4);
+      textSize(16);
+      text(menu.getCurrentOptionValue(), width/2, 3*height/4 + 40);
+
+      if (menu.canIncreaseCurrentOption()) {
+          triangle(width/2, 3*height/4 + 10, width/2 - 5, 3*height/4 + 15, width/2 + 5, 3*height/4 + 15);
+      }
+      if (menu.canDecreaseCurrentOption()) {
+          triangle(width/2, 3*height/4 + 51, width/2 - 5, 3*height/4 + 46, width/2 + 5, 3*height/4 + 46);
+      }
+    }
+
+    popStyle();
   }
 }

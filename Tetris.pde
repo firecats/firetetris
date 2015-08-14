@@ -18,6 +18,7 @@ Config config;
 AppletRenderer renderer;
 UDPRenderer udpRenderer;
 TetrisGame currentGame;
+TetrisMenu menu;
 GameInputController inputController;
 ControlP5 controlP5;
 Minim minim;
@@ -29,16 +30,36 @@ public void setup() {
   inputController = new GameInputController(this, config);
   renderer = new AppletRenderer();
   udpRenderer = new UDPRenderer(config);
+  menu = new TetrisMenu();
   
   minim = new Minim(this);
 }
 
 public void draw() {
-  inputController.update(currentGame);
-  if (currentGame != null) currentGame.update();
+  boolean menuShown = currentGame == null || currentGame.isGameOver() || currentGame.isPaused();
+  // Get the current input, direct it to the current active component
+  inputController.update(menuShown ? menu : currentGame);
+
+  // Recalculate which is the active component as it may have changed
+  menuShown = currentGame == null || currentGame.isGameOver() || currentGame.isPaused();
+
+  // Clear everything from previous frame
+  background(0);
+
+  // Update and render the current game
+  if (currentGame != null && !currentGame.isPaused()) currentGame.update();
   renderer.renderGameState(currentGame);
   udpRenderer.renderGameState(currentGame);
   if (currentGame != null) currentGame.cleanup();
+
+  // Update and render the menu
+  if (menuShown) {
+    pushStyle();
+    fill(0, 0, 0, 230);
+    rect(0, 0, width, height);
+    popStyle();
+    renderer.renderMenu(currentGame, menu);
+  }
 }
 
 boolean ctrlPressed = false;
@@ -65,9 +86,4 @@ public void keyReleased() {
   }
 
   inputController.keyReleased();
-}
-
-public void newGame() {
-  minim.stop();
-  currentGame = new TetrisGame(minim);
 }
