@@ -22,6 +22,7 @@ TetrisMenu menu;
 GameInputController inputController;
 ControlP5 controlP5;
 Minim minim;
+Audio audio;
 
 public void setup() {
   size(562, 666, PApplet.P2D); // Must be the first call in setup()
@@ -33,6 +34,7 @@ public void setup() {
   menu = new TetrisMenu();
   
   minim = new Minim(this);
+  audio = new Audio(minim);
 }
 
 public void draw() {
@@ -46,11 +48,19 @@ public void draw() {
   // Clear everything from previous frame
   background(0);
 
+  // Update the audio
+  if (audio != null)
+    audio.update();
+
   // Update and render the current game
-  if (currentGame != null && !currentGame.isPaused()) currentGame.update();
+  if (currentGame != null && !currentGame.isPaused()) 
+    currentGame.update();
+
   renderer.renderGameState(currentGame);
   udpRenderer.renderGameState(currentGame);
-  if (currentGame != null) currentGame.cleanup();
+  
+  if (currentGame != null)
+    currentGame.cleanup();
 
   // Update and render the menu
   if (menuShown) {
@@ -75,7 +85,14 @@ public void keyPressed() {
     exit();
   } else if (keyCode == CONTROL) {
     ctrlPressed = true;
+  } else if (char(keyCode) == 'S') {
+    audio.toggleShuffleMode();
+  } else if (char(keyCode) == 'L') {
+    audio.toggleLoopSingleTrackMode();
+  } else if (char(keyCode) == 'N') {
+    audio.playNextMusic();
   }
+
 
   inputController.keyPressed();
 }
