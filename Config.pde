@@ -9,6 +9,10 @@ static class Config {
   //static String gamepadConfiguration = "nes_controller_mac";
   static String gamepadConfiguration = "";
 
+  // Path of the directory containing all music files, relative to the
+  // app "data" directory. Subdirectories are not currently supported.
+  static String musicPath = "music";
+
   //static String arduinoInputConfiguration = "/dev/cu.usbmodem1411";
   static String arduinoInputConfiguration = "";
 
