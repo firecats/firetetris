@@ -125,7 +125,7 @@ class MusicLibrary implements FilenameFilter {
       do {
         selection = int(random(pool.size()));
       }
-      while (i == 0 && selection == _currentFile );
+      while (i == 0 && selection == _currentFile && pool.size() > 1);
       result[i] = (int) pool.remove(selection);
     }
     
