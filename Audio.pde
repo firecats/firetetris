@@ -40,8 +40,6 @@ class Audio {
       stopMusic();
 
     music = minim.loadFile(library.getNextFile());
-    music.setGain(-15);
-
     music.play();
   }
 
@@ -70,7 +68,6 @@ class Audio {
       return;
 
     music.pause();
-    minim.stop();
     music = null;
   }
 
