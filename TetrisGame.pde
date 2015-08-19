@@ -35,7 +35,7 @@ class TetrisGame extends InputHandler {
   // Countdown for animation. Animation lasts for 20 frames.
   private int animateCount;
 
-  TetrisGame(Minim minim) {
+  TetrisGame(Audio aAudio) {
     shapes[0] = new Shape(4, new int[] {4,5,6,7}, color(0, 255, 255), 0);   // I
     shapes[1] = new Shape(3, new int[] {1,2,3,4}, color(0,255,0), 1);       // S
     shapes[2] = new Shape(3, new int[] {0,1,4,5}, color(255,0,0), 2);     // Z
@@ -53,7 +53,7 @@ class TetrisGame extends InputHandler {
     currTime = 0;
     animateCount = -1;
     
-    audio = new Audio(minim);
+    audio = aAudio;
     audio.playMusic();
 
     lastScoreWasSpecial = false;

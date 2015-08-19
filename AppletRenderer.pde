@@ -49,6 +49,15 @@ class AppletRenderer {
     text("HOLD", 10, 28);
     text("NEXT", 460, 28);
 
+    String musicPlaybackMode ="";
+    if (audio.isLoopSingleTrackMode()) {
+      musicPlaybackMode = "(L1)";
+    } else if (audio.isShuffleMode()) {
+      musicPlaybackMode = "(SH)";
+    }
+    text("MUSIC" + musicPlaybackMode + ": " + audio.getCurrentMusic(), 10, 660);
+    
+
     int y = 221;
     for (ScoreValue scoreValue : currentGame.getScoreValues()) {
       text(scoreValue.displayName, 460, y);
