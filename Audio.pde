@@ -67,7 +67,7 @@ class Audio {
     if (music == null)
       return;
 
-    music.pause();
+    music.close();
     music = null;
   }
 

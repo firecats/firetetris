@@ -120,13 +120,16 @@ class MusicLibrary implements FilenameFilter {
     // This generates a random music selection with the added
     // constraint that the first selection in the shuffle
     // cannot be the currently playing file, to prevent repeats
+    int currentlyPlayingAsIndexInFileArray = _shuffleMode && _shuffleOrder!= null ? _shuffleOrder[_currentFile] : _currentFile;
     for (int i=0; i<_musicDirContents.length; ++i) {
-      int selection;
+      int indexInPool;
+      int indexInFilenameArray;
       do {
-        selection = int(random(pool.size()));
+        indexInPool = int(random(pool.size()));
+        indexInFilenameArray = pool.get(indexInPool);
       }
-      while (i == 0 && selection == _currentFile && pool.size() > 1);
-      result[i] = (int) pool.remove(selection);
+      while (i == 0 && indexInFilenameArray == currentlyPlayingAsIndexInFileArray && pool.size() > 1);
+      result[i] = (int) pool.remove(indexInPool);
     }
     
     return result;
