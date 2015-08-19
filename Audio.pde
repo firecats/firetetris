@@ -1,13 +1,14 @@
 class Audio {
 
-  AudioPlayer music; 
-  AudioSample rotate, place, line, tetris;
+  AudioPlayer music;
+  AudioSample selectionImproved, rotate, place, line, tetris;
   MusicLibrary library;
   boolean loopSingleTrack = false;
 
   Audio(Minim minim) {
     library = new MusicLibrary();
-
+    
+    selectionImproved = minim.loadSample("selection_improved.wav");
     rotate = minim.loadSample("rotate.aif");
     place = minim.loadSample("place.aif");
     line = minim.loadSample("line.aif");
@@ -71,6 +72,10 @@ class Audio {
     music = null;
   }
 
+  public void playSelectionImproved() {
+    selectionImproved.trigger();
+  }
+  
   public void playRotate() {
     rotate.trigger();
   }

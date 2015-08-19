@@ -6,11 +6,10 @@ class TetrisGame extends InputHandler {
   // Game properties
   private Tetromino current;
   private Audio audio;
-  private ArrayList<Shape> nextShapes;
   private Shape held;
   private boolean heldUsed;
   private Grid grid;
-  private Shape[] shapes = new Shape[7];
+  private NextPieceProvider nextPieceProvider;
   private ArrayList<ScoreValue> scoreValues;
   private ArrayList<GameMod> mods = new ArrayList<GameMod>();
 
@@ -36,15 +35,8 @@ class TetrisGame extends InputHandler {
   private int animateCount;
 
   TetrisGame(Audio aAudio) {
-    shapes[0] = new Shape(4, new int[] {4,5,6,7}, color(0, 255, 255), 0);   // I
-    shapes[1] = new Shape(3, new int[] {1,2,3,4}, color(0,255,0), 1);       // S
-    shapes[2] = new Shape(3, new int[] {0,1,4,5}, color(255,0,0), 2);     // Z
-    shapes[3] = new Shape(3, new int[] {0,3,4,5}, color(0,0,255), 3);     // J
-    shapes[4] = new Shape(3, new int[] {2,3,4,5}, color(255,165,0), 4);   // L
-    shapes[5] = new Shape(3, new int[] {1,3,4,5}, color(160,32,240), 5);  // T
-    shapes[6] = new Shape(2, new int[] {0,1,2,3}, color(255,255,0), 6);   // O
-    nextShapes = new ArrayList<Shape>();
-    
+    nextPieceProvider = new StandardNextPieceProvider();
+
     grid = new Grid(TETRIS_HEIGHT, TETRIS_WIDTH);
 
     loadNext();
@@ -83,7 +75,7 @@ class TetrisGame extends InputHandler {
   }
 
   public ArrayList<Shape> getNextShapes() {
-    return nextShapes;
+    return nextPieceProvider.getNextShapes();
   }
 
   public Grid getGrid() {
@@ -216,9 +208,9 @@ class TetrisGame extends InputHandler {
     if (current == null) return;
     
     int distance = 0;
-    if (isLegal(current.shape, current.x - 1, current.y))
+    if (grid.isLegal(current.shape, current.x - 1, current.y))
       distance = 1;
-    else if (isLegal(current.shape, current.x - 2, current.y))
+    else if (grid.isLegal(current.shape, current.x - 2, current.y))
       distance = 2;
 
     if (distance > 0) {
@@ -235,9 +227,9 @@ class TetrisGame extends InputHandler {
     if (current == null) return;
     
     int distance = 0;
-    if (isLegal(current.shape, current.x + 1, current.y))
+    if (grid.isLegal(current.shape, current.x + 1, current.y))
       distance = 1;
-    else if (isLegal(current.shape, current.x + 2, current.y))
+    else if (grid.isLegal(current.shape, current.x + 2, current.y))
       distance = 2;
 
     if (distance > 0) {
@@ -280,24 +272,24 @@ class TetrisGame extends InputHandler {
     boolean wasRotated = true;
     boolean wasFloorKicked = false;
 
-    if (isLegal(rotated, currentX, currentY)) {
+    if (grid.isLegal(rotated, currentX, currentY)) {
       // Nothing to do
-    } else if (isLegal(rotated, currentX + 1, currentY)) {
+    } else if (grid.isLegal(rotated, currentX + 1, currentY)) {
       current.x++;
-    } else if (isLegal(rotated, currentX - 1, currentY)) {
+    } else if (grid.isLegal(rotated, currentX - 1, currentY)) {
       current.x--;
-    } else if (isLegal(rotated, currentX + 2, currentY)) {
+    } else if (grid.isLegal(rotated, currentX + 2, currentY)) {
       current.x += 2;
-    } else if (isLegal(rotated, currentX - 2, currentY)) {
+    } else if (grid.isLegal(rotated, currentX - 2, currentY)) {
       current.x -= 2;
       // Floor kick
-    } else if (isLegal(rotated, currentX, currentY - 1)) {
+    } else if (grid.isLegal(rotated, currentX, currentY - 1)) {
       current.y -= 1;
       wasFloorKicked = true;
-    } else if (isLegal(rotated, currentX, currentY - 2)) {
+    } else if (grid.isLegal(rotated, currentX, currentY - 2)) {
       current.y -= 2;
       wasFloorKicked = true;
-    } else if (isLegal(rotated, currentX, currentY - 3)) {
+    } else if (grid.isLegal(rotated, currentX, currentY - 3)) {
       current.y -= 3;
       wasFloorKicked = true;
       // No rotation possible
@@ -332,9 +324,9 @@ class TetrisGame extends InputHandler {
     if (heldUsed || current == null) return;
     
     int currentShapeId = current.shape.shapeId;
-    if (held == null) held = nextShapes.remove(0);
+    if (held == null) held = nextPieceProvider.takeNextShape();
     insertShape(held);
-    held = shapes[currentShapeId];
+    held = TETRIS_SHAPES[currentShapeId];
     
     heldUsed = true;
   }
@@ -345,6 +337,15 @@ class TetrisGame extends InputHandler {
       audio.stopMusic();
     }
   }
+
+  public void transitionToProvider(NextPieceProvider provider) {
+    CompositeNextPieceProvider newProvider = new CompositeNextPieceProvider();
+    ArrayList<Shape> currentNextShapes = getNextShapes();
+    if (currentNextShapes.size() > 3) currentNextShapes.subList(3, currentNextShapes.size()).clear();
+    newProvider.providers.add(new PresetNextPieceProvider(currentNextShapes));
+    newProvider.providers.add(provider);
+    nextPieceProvider = newProvider;
+  }
   
   // Copies the current shape into the grid (making it part of the
   // level's collision)
@@ -354,10 +355,12 @@ class TetrisGame extends InputHandler {
   //
   // This expects that the current tetromino is at its final row.
   private void finalizeShapePlacement() {
-    for (int i = 0; i < current.shape.matrix.length; ++i)
-      for (int j = 0; j < current.shape.matrix.length; ++j)
-        if (current.shape.matrix[i][j] && j + current.y >= 0) 
-          grid.colors[i + current.x][j + current.y] = current.shape.c;
+    if (current == null) return;
+
+    if (!grid.placeShape(current.shape, current.x, current.y)) {
+      // Failed to place the shape, this should not happen since we check for legality before moving 'current'.
+      println("Failed to place shape at specified location");
+    }
     
     if (checkLines()) {
       // Start "rows cleared" animation, next piece will be loaded at end of animation 
@@ -438,17 +441,7 @@ class TetrisGame extends InputHandler {
   // Calls insertShape, which pops the first shape from this queue and initializes 
   // the current tetromino based on this shape.
   private void loadNext() {
-    while (nextShapes.size() < shapes.length) {
-      ArrayList<Shape> newShapes = new ArrayList<Shape>();
-      for (int i = 0; i < shapes.length; ++i) {
-        newShapes.add(new Shape(shapes[i]));
-      }
-      while (!newShapes.isEmpty()) {
-        nextShapes.add(newShapes.remove((int)(Math.random() * newShapes.size())));
-      }
-    }
-    
-    insertShape(nextShapes.remove(0));
+    insertShape(nextPieceProvider.takeNextShape());
   }
 
   // Initializes the current tetromino, assigns its final row
@@ -456,28 +449,19 @@ class TetrisGame extends InputHandler {
     current = new Tetromino(shape);
     current.final_row = getFinalRow();
     usedFloorKick = false;
-    if (!isLegal(current.shape, 3, -1)) endGame();
+    if (!grid.isLegal(current.shape, current.x, -1)) endGame();
   }
 
   // Based on the current position of the tetromino along the
   // x-axis, finds the bottom-most row for it, i.e. the row
   // that it would land on if it were hard-dropped
   private int getFinalRow() {
+    if (current == null) return -1;
+
     int start = Math.max(0, current.y);
     for (int row = start; row <= grid.rows; ++row)
-      if (!isLegal(current.shape, current.x, row))
+      if (!grid.isLegal(current.shape, current.x, row))
         return row - 1;
     return -1;
-  }
-
-  // Performs a collision test from a shape against the blocks 
-  // already in the grid. Returns true if there is no collision,
-  // false if there is.
-  private boolean isLegal(Shape shape, int col, int row) {
-    for (int i = 0; i < shape.matrix.length; ++i)
-      for (int j = 0; j < shape.matrix.length; ++j)
-        if (shape.matrix[i][j] && grid.isOccupied(col + i, row + j))
-          return false;
-    return true;
   }
 }

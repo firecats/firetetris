@@ -15,10 +15,12 @@ class GameMod {
 class TimedMode extends GameMod {
   private int startTime;
   private int gameDuration;
+  private boolean ended;
   private TimeScoreValue timer = new TimeScoreValue("TIME", 0);
 
   TimedMode(int gameDuration) {
     this.gameDuration = gameDuration;
+    this.ended = false;
   }
 
   public void initialize(TetrisGame game) {
@@ -30,7 +32,11 @@ class TimedMode extends GameMod {
   public void update() {
     timer.seconds = (gameDuration - (millis() - startTime)) / 1000;
     if (timer.seconds < 0) timer.seconds = 0;
-    if (game != null && timer.seconds == 0) game.endGame();
+    if (game != null && timer.seconds == 0 && !ended) {
+      ended = true;
+      game.audio.playSelectionImproved();
+      game.transitionToProvider(new ToughestNextPieceProvider(game));
+    }
   }
 
   public void setPaused(boolean paused) {
