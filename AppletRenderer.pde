@@ -2,6 +2,7 @@ import controlP5.*;
 
 class AppletRenderer {
 
+  private final String[] HARD_MODE_TEXT = new String[] { "WORST", "PIECE", "" };
   private final GridView boardView;
   private final GridView previewView;
   private final GridView heldPieceView;
@@ -32,11 +33,18 @@ class AppletRenderer {
     
     previewView.drawOutline();
     ArrayList<Shape> nextShapes = currentGame.getNextShapes();
-    for (int i = 0; i < Math.min(nextShapes.size() - 1, 3); ++i) {
-      Shape next = nextShapes.get(i);
-      previewView.drawShape(next, 1, 1 + i * 3 - next.getFirstNonEmptyRow());
+    pushStyle();
+    textAlign(CENTER, CENTER);
+    for (int i = 0; i < 3; ++i) {
+      if (i < nextShapes.size()) {
+        Shape next = nextShapes.get(i);
+        previewView.drawShape(next, 1, 1 + i * 3 - next.getFirstNonEmptyRow());
+      } else {
+        text(HARD_MODE_TEXT[i - nextShapes.size()], previewView.x + previewView.width / 2, previewView.y + previewView.height / 6 + previewView.height / 3 * i);
+      }
     }
-    
+    popStyle();
+
     heldPieceView.drawOutline();
     if (currentGame.getHeld() != null) {
       Shape heldShape = new Shape(currentGame.getHeld());
