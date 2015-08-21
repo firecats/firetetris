@@ -46,6 +46,7 @@ class TetrisGame extends InputHandler {
     animateCount = -1;
     
     audio = aAudio;
+    audio.resumeMusic();
     audio.playMusic();
 
     lastScoreWasSpecial = false;
@@ -334,7 +335,7 @@ class TetrisGame extends InputHandler {
   public void endGame() {
     gameOver = true;
     if(gameOver) {
-      audio.stopMusic();
+      audio.pauseMusic();
     }
   }
 

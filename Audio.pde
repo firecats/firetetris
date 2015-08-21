@@ -4,6 +4,7 @@ class Audio {
   AudioSample selectionImproved, rotate, place, line, tetris;
   MusicLibrary library;
   boolean loopSingleTrack = false;
+  boolean paused = false;
 
   Audio(Minim minim) {
     library = new MusicLibrary();
@@ -23,7 +24,7 @@ class Audio {
   // Meant to be called at every frame
   public void update() {
     // Detect that the music has stopped
-    if (music != null && !music.isPlaying()) {
+    if (music != null && !music.isPlaying() && !paused) {
       if (loopSingleTrack) {
         music.rewind();
         music.play();
@@ -76,6 +77,22 @@ class Audio {
 
     music.close();
     music = null;
+  }
+
+  public void pauseMusic() {
+    if (music == null)
+      return;
+
+    paused = true;
+    music.pause();
+  }
+
+  public void resumeMusic() {
+    if (music == null)
+      return;
+
+    paused = false;
+    music.play();
   }
 
   public void playSelectionImproved() {

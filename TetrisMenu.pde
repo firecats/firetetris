@@ -31,7 +31,7 @@ class TetrisMenu extends InputHandler implements ControlListener {
   public void right() {}
 
   private void newGame() {
-    audio.stopMusic();
+    audio.resumeMusic();
     currentGame = new TetrisGame(audio);
     if (gameDuration > 0) currentGame.addMod(new TimedMode(1000 * 60 * gameDuration));
   }
