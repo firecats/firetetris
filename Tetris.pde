@@ -100,6 +100,10 @@ public void keyPressed() {
     audio.toggleLoopSingleTrackMode();
   } else if (char(keyCode) == 'N') {
     audio.playNextMusic();
+  } else if (char(keyCode) == 'T') {
+    // ick
+    GameMod mod = currentGame.getMod(0);
+    mod.addTime(1000 * 60);
   }
 
 

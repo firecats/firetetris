@@ -130,6 +130,10 @@ class TetrisGame extends InputHandler {
     mods.add(mod);
   }
 
+  public GameMod getMod(int n) {
+    return mods.get(n);
+  }
+
   public void addScoreValue(ScoreValue scoreValue) {
     scoreValues.add(scoreValue);
   }
