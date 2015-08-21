@@ -104,8 +104,9 @@ public void keyPressed() {
     // ick
     GameMod mod = currentGame.getMod(0);
     mod.addTime(1000 * 60);
+  } else if (char(keyCode) == 'F') {
+    currentGame.setFullFire();
   }
-
 
   inputController.keyPressed();
 }

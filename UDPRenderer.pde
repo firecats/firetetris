@@ -23,6 +23,9 @@ class UDPRenderer {
     if (currentGame == null || currentGame.isGameOver()) {
       packet.addPoofer(false);
       packet.emptyGrid();
+    } else if (currentGame.isFullFire()) {
+      packet.addPoofer(true);
+      packet.fullGrid();
     } else {
       int currentMillis = millis();
       if (currentGame.getJustScoredSpecial())

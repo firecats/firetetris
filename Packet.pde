@@ -37,6 +37,12 @@ class Packet {
     this.addGridData(new boolean[this.width][this.height]);
   }
   
+  void fullGrid() {
+    for (int i = 0; i < this.height; ++i) {
+      packet+="1111111111\n";
+    }
+  }
+
   String getData() {
     return this.packet;
   }

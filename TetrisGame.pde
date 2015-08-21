@@ -33,6 +33,7 @@ class TetrisGame extends InputHandler {
   
   // Countdown for animation. Animation lasts for 20 frames.
   private int animateCount;
+  private int fullFireCount;
 
   TetrisGame(Audio aAudio) {
     nextPieceProvider = new StandardNextPieceProvider();
@@ -44,6 +45,7 @@ class TetrisGame extends InputHandler {
     timer = FRAMES_PER_ROW[0];
     currTime = 0;
     animateCount = -1;
+    fullFireCount = -1;
     
     audio = aAudio;
     audio.resumeMusic();
@@ -107,12 +109,20 @@ class TetrisGame extends InputHandler {
     return paused;
   }
 
+  public boolean isFullFire() {
+    return (fullFireCount > 0);
+  }
+
   public void setPaused(boolean paused) {
     this.paused = paused;
 
     for (GameMod mod : mods) {
       mod.setPaused(paused);
     }
+  }
+
+  public void setFullFire() {
+    fullFireCount = 50;
   }
 
   // This is used as a timer for the "row clearing" animation. While rows are being cleared,
@@ -170,6 +180,10 @@ class TetrisGame extends InputHandler {
         grid.eraseCleared();
         loadNext();
       }
+    }
+
+    if (fullFireCount >= 0) {
+      fullFireCount--;
     }
 
     currTime++;
