@@ -19,16 +19,18 @@ class TetrisMenu extends InputHandler implements ControlListener {
     }
   }
 
-  public void up() {
+  public void menuUp() {
     gameDuration++;
   }
 
-  public void down() {
+  public void menuDown() {
     gameDuration = max(0, gameDuration - 1);
   }
 
   public void left() {}
   public void right() {}
+  public void up() {}
+  public void down() {}
 
   private void newGame() {
     audio.resumeMusic();

@@ -8,8 +8,8 @@ class KeyboardGameInput extends GameInput {
   public void keyPressed() {
     switch (keyCode) {
       case ENTER: case RETURN: startActive = true; break;
-      case UP: upActive = rotateActive = true; break;
-      case DOWN: downActive = true; break;
+      case UP: upActive = rotateActive = menuUpActive = true; break;
+      case DOWN: downActive = menuDownActive = true; break;
       case LEFT: leftActive = true; break;
       case RIGHT: rightActive = true; break;
       case SHIFT: swapHeldActive = true; break;
@@ -23,8 +23,8 @@ class KeyboardGameInput extends GameInput {
   public void keyReleased() {
     switch (keyCode) {
       case ENTER: case RETURN: startActive = false; break;
-      case UP: upActive = rotateActive = false; break;
-      case DOWN: downActive = false; break;
+      case UP: upActive = rotateActive = menuUpActive = false; break;
+      case DOWN: downActive = menuDownActive = false; break;
       case LEFT: leftActive = false; break;
       case RIGHT: rightActive = false; break;
       case SHIFT: swapHeldActive = false; break;

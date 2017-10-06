@@ -202,6 +202,9 @@ class TetrisGame extends InputHandler {
     }
   }
 
+  public void menuUp() {}
+  public void menuDown() {}
+
   // Cleanup that needs to happen at the end of a frame
   public void cleanup() {
     justScoredSpecial = false;
