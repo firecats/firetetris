@@ -4,21 +4,27 @@ class Audio {
   AudioSample selectionImproved, rotate, place, line, tetris;
   MusicLibrary library;
   boolean loopSingleTrack = false;
+  boolean paused = false;
 
   Audio(Minim minim) {
     library = new MusicLibrary();
     
     selectionImproved = minim.loadSample("selection_improved.wav");
-    rotate = minim.loadSample("rotate.wav");
-    place = minim.loadSample("place.wav");
-    line = minim.loadSample("line.wav");
-    tetris = minim.loadSample("tetris.wav");
+    selectionImproved.setGain(30);
+    rotate = minim.loadSample("rotate.aif");
+    rotate.setGain(5);
+    place = minim.loadSample("place.aif");
+    place.setGain(-5);
+    line = minim.loadSample("line.aif");
+    line.setGain(5);
+    tetris = minim.loadSample("tetris.aif");
+    tetris.setGain(10);
   }
 
   // Meant to be called at every frame
   public void update() {
     // Detect that the music has stopped
-    if (music != null && !music.isPlaying()) {
+    if (music != null && !music.isPlaying() && !paused) {
       if (loopSingleTrack) {
         music.rewind();
         music.play();
@@ -41,6 +47,7 @@ class Audio {
       stopMusic();
 
     music = minim.loadFile(library.getNextFile());
+    music.setGain(-10);
     music.play();
   }
 
@@ -70,6 +77,22 @@ class Audio {
 
     music.close();
     music = null;
+  }
+
+  public void pauseMusic() {
+    if (music == null)
+      return;
+
+    paused = true;
+    music.pause();
+  }
+
+  public void resumeMusic() {
+    if (music == null)
+      return;
+
+    paused = false;
+    music.play();
   }
 
   public void playSelectionImproved() {

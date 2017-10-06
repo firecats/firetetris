@@ -8,6 +8,8 @@ class InputHandler {
   public void right() {}
   public void hardDown() {}
   public void swapHeld() {}
+  public void menuUp() {}
+  public void menuDown() {}
 }
 
 /*
@@ -27,6 +29,8 @@ class GameInputController {
   CommandManager rightCommandManager;
   CommandManager hardDownCommandManager;
   CommandManager swapHeldCommandManager;
+  CommandManager menuUpCommandManager;
+  CommandManager menuDownCommandManager;
 
   GameInputController(PApplet applet, Config config) {
     aggregateInput = new CompositeGameInput();
@@ -54,6 +58,8 @@ class GameInputController {
     rightCommandManager = new CommandDelayManager();
     hardDownCommandManager = new ArmedCommandManager();
     swapHeldCommandManager = new ArmedCommandManager();
+    menuUpCommandManager = new CommandDelayManager();
+    menuDownCommandManager = new CommandDelayManager();
   }
 
   public void update(InputHandler receiver) {
@@ -67,6 +73,8 @@ class GameInputController {
     if (rightCommandManager.isTriggered(aggregateInput.rightActive)) receiver.right();
     if (hardDownCommandManager.isTriggered(aggregateInput.hardDownActive)) receiver.hardDown();
     if (swapHeldCommandManager.isTriggered(aggregateInput.swapHeldActive)) receiver.swapHeld();
+    if (menuUpCommandManager.isTriggered(aggregateInput.menuUpActive)) receiver.menuUp();
+    if (menuDownCommandManager.isTriggered(aggregateInput.menuDownActive)) receiver.menuDown();
   }
 
   public void keyPressed() {

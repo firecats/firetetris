@@ -8,6 +8,8 @@ class GameInput {
   public boolean rightActive;
   public boolean hardDownActive;
   public boolean swapHeldActive;
+  public boolean menuUpActive;
+  public boolean menuDownActive;
 
   public void update() { }
 }
@@ -29,6 +31,8 @@ class CompositeGameInput extends GameInput {
     rightActive = false;
     hardDownActive = false;
     swapHeldActive = false;
+    menuUpActive = false;
+    menuDownActive = false;
 
     for (GameInput input : gameInputs) {
       input.update();
@@ -41,6 +45,8 @@ class CompositeGameInput extends GameInput {
       if (input.rightActive) rightActive = true;
       if (input.hardDownActive) hardDownActive = true;
       if (input.swapHeldActive) swapHeldActive = true;
+      if (input.menuUpActive) menuUpActive = true;
+      if (input.menuDownActive) menuDownActive = true;
     }
   }
 }

@@ -8,6 +8,7 @@ class GameMod {
 
   public void update() {}
   public void setPaused(boolean paused) {}
+  public void addTime(int extraTime) {}
 }
 
 // TimedMode will automatically end the game after a predetermined set of time. This time is specified
@@ -47,5 +48,9 @@ class TimedMode extends GameMod {
       // Reset the start point
       this.startTime = millis();
     }
+  }
+
+  public void addTime(int extraTime) {
+    this.gameDuration += extraTime;
   }
 }
