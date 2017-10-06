@@ -12,13 +12,13 @@ class Audio {
     selectionImproved = minim.loadSample("selection_improved.wav");
     selectionImproved.setGain(30);
     rotate = minim.loadSample("rotate.aif");
-    rotate.setGain(10);
+    rotate.setGain(5);
     place = minim.loadSample("place.aif");
-    place.setGain(0);
+    place.setGain(-5);
     line = minim.loadSample("line.aif");
-    line.setGain(10);
+    line.setGain(5);
     tetris = minim.loadSample("tetris.aif");
-    tetris.setGain(15);
+    tetris.setGain(10);
   }
 
   // Meant to be called at every frame
@@ -47,7 +47,7 @@ class Audio {
       stopMusic();
 
     music = minim.loadFile(library.getNextFile());
-    music.setGain(-5);
+    music.setGain(-10);
     music.play();
   }
 
