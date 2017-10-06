@@ -9,10 +9,10 @@ class Audio {
     library = new MusicLibrary();
     
     selectionImproved = minim.loadSample("selection_improved.wav");
-    rotate = minim.loadSample("rotate.wav");
-    place = minim.loadSample("place.wav");
-    line = minim.loadSample("line.wav");
-    tetris = minim.loadSample("tetris.wav");
+    rotate = minim.loadSample("rotate.aif");
+    place = minim.loadSample("place.aif");
+    line = minim.loadSample("line.aif");
+    tetris = minim.loadSample("tetris.aif");
   }
 
   // Meant to be called at every frame
